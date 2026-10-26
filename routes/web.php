@@ -30,7 +30,8 @@ Route::get('/', function (Request $request) {
             $query->where(function ($sub) use ($searchTerm) {
                 $sub->where('title', 'like', "%{$searchTerm}%")
                     ->orWhere('excerpt', 'like', "%{$searchTerm}%")
-                    ->orWhere('content', 'like', "%{$searchTerm}%");
+                    ->orWhere('content', 'like', "%{$searchTerm}%")
+                    ->orWhereHas('category', fn ($category) => $category->where('name', 'like', "%{$searchTerm}%"));
             });
         })
         ->latest('published_at')

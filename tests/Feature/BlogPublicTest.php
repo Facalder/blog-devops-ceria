@@ -40,9 +40,18 @@ test('visitors can read published article single page', function () {
         ->assertSee('GitOps is awesome');
 });
 
-test('visitors can search published articles by title on homepage', function () {
+test('visitors can search published articles by title or category on homepage', function () {
+    $category = Category::factory()->create(['name' => 'Container Orchestration']);
+
     Post::factory()->create([
         'title' => 'Tutorial Docker Container',
+        'status' => 'published',
+        'published_at' => now(),
+    ]);
+
+    Post::factory()->create([
+        'title' => 'Deploying Apps on K8s',
+        'category_id' => $category->id,
         'status' => 'published',
         'published_at' => now(),
     ]);
@@ -53,10 +62,11 @@ test('visitors can search published articles by title on homepage', function () 
         'published_at' => now(),
     ]);
 
-    $response = $this->get(route('home', ['search' => 'Docker']));
+    $response = $this->get(route('home', ['search' => 'Container']));
 
     $response->assertOk()
         ->assertSee('Tutorial Docker Container')
+        ->assertSee('Deploying Apps on K8s')
         ->assertDontSee('Belajar Terraform Cloud');
 });
 
