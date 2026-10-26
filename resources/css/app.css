@@ -1,0 +1,261 @@
+@import 'tailwindcss';
+@import '../../vendor/livewire/flux/dist/flux.css';
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../vendor/livewire/flux-pro/stubs/**/*.blade.php';
+@source '../../vendor/livewire/flux/stubs/**/*.blade.php';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-serif: 'Plex Serif', Georgia, Cambria, 'Times New Roman', Times, serif;
+    --font-mono: 'Writer', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    /* Zed Dev Light - High Contrast Theme */
+    --color-primary: #1348DC;
+    --color-primary-hover: #0F39AD;
+    --color-primary-active: #0A277A;
+    --color-primary-subtle: #3660DE;
+    --color-primary-tint: #EEF2FD;
+    --color-surface: #F8F9FC;
+    --color-on-surface: #1D2939;
+    --color-tertiary: #475467;
+    --color-border-subtle: #D0D5DD;
+
+    --color-zinc-50: #fafafa;
+    --color-zinc-100: #f4f5f7;
+    --color-zinc-200: #e4e7ec;
+    --color-zinc-300: #d0d5dd;
+    --color-zinc-400: #475467;
+    --color-zinc-500: #344054;
+    --color-zinc-600: #1d2939;
+    --color-zinc-700: #101828;
+    --color-zinc-800: #0c111d;
+    --color-zinc-900: #05080f;
+    --color-zinc-950: #020408;
+
+    --color-accent: var(--color-primary);
+    --color-accent-content: var(--color-primary);
+    --color-accent-foreground: #FFFFFF;
+}
+
+@layer base {
+
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-border-subtle);
+    }
+
+    body {
+        color: var(--color-on-surface);
+        background-color: #FFFFFF;
+    }
+}
+
+/* Flux Sidebar High-Contrast Styling */
+[data-flux-sidebar] {
+    background-color: #F8F9FC !important;
+    border-right: 1px solid #D0D5DD !important;
+}
+
+[data-flux-sidebar-group] > [class*="text-zinc"],
+[data-flux-sidebar-group] [data-flux-sidebar-group-heading] {
+    color: #344054 !important;
+    font-weight: 600 !important;
+    font-family: var(--font-mono) !important;
+    letter-spacing: 0.06em !important;
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+}
+
+[data-flux-sidebar] a[data-flux-sidebar-item] {
+    color: #1D2939 !important;
+    font-weight: 500 !important;
+    border: 1px solid transparent !important;
+    transition: all 0.15s ease !important;
+}
+
+[data-flux-sidebar] a[data-flux-sidebar-item] svg,
+[data-flux-sidebar] a[data-flux-sidebar-item] [data-flux-icon] {
+    color: #475467 !important;
+    transition: color 0.15s ease !important;
+}
+
+[data-flux-sidebar] a[data-flux-sidebar-item]:hover {
+    background-color: #FFFFFF !important;
+    color: #1348DC !important;
+    border-color: #D0D5DD !important;
+}
+
+[data-flux-sidebar] a[data-flux-sidebar-item]:hover svg,
+[data-flux-sidebar] a[data-flux-sidebar-item]:hover [data-flux-icon] {
+    color: #1348DC !important;
+}
+
+[data-flux-sidebar] a[data-flux-sidebar-item][data-current] {
+    background-color: #EEF2FD !important;
+    color: #1348DC !important;
+    font-weight: 600 !important;
+    border-color: rgba(19, 72, 220, 0.3) !important;
+}
+
+[data-flux-sidebar] a[data-flux-sidebar-item][data-current] svg,
+[data-flux-sidebar] a[data-flux-sidebar-item][data-current] [data-flux-icon] {
+    color: #1348DC !important;
+}
+
+[data-flux-field]:not(ui-radio, ui-checkbox) {
+    @apply grid gap-2;
+}
+
+[data-flux-label] {
+    @apply  !mb-0 !leading-tight;
+}
+
+input:focus[data-flux-control],
+textarea:focus[data-flux-control],
+select:focus[data-flux-control] {
+    @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
+}
+
+/* EasyMDE Zed Dev Light Theme */
+.editor-toolbar {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-bottom: none;
+    border-radius: 2px 2px 0 0;
+    padding: 6px 8px;
+}
+
+.editor-toolbar button {
+    color: var(--color-on-surface) !important;
+    border-radius: 3px !important;
+    border: 1px solid transparent !important;
+    transition: background-color 0.15s ease;
+}
+
+.editor-toolbar button:hover,
+.editor-toolbar button.active {
+    background-color: #FFFFFF !important;
+    border-color: var(--color-border-subtle) !important;
+    color: var(--color-primary) !important;
+}
+
+.editor-toolbar i.separator {
+    border-left: 1px solid var(--color-border-subtle) !important;
+    border-right: none !important;
+    margin: 0 4px;
+}
+
+.CodeMirror {
+    border: 1px solid var(--color-border-subtle) !important;
+    border-radius: 0 0 2px 2px;
+    font-family: var(--font-mono) !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    color: var(--color-on-surface) !important;
+    background-color: #FFFFFF !important;
+}
+
+.CodeMirror-focused {
+    border-color: var(--color-primary) !important;
+}
+
+.editor-preview, .editor-preview-side {
+    background: #FFFFFF !important;
+    font-family: var(--font-sans);
+    color: var(--color-on-surface);
+    padding: 20px 24px !important;
+}
+
+.editor-preview h1, .editor-preview h2, .editor-preview h3,
+.editor-preview-side h1, .editor-preview-side h2, .editor-preview-side h3 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    margin-top: 1.25em;
+    margin-bottom: 0.5em;
+}
+
+/* Markdown Prose High-Contrast */
+.prose h1, .prose h2, .prose h3, .prose h4 {
+    color: #1D2939 !important;
+    font-family: var(--font-serif) !important;
+    font-weight: 500 !important;
+    margin-top: 1.75em !important;
+    margin-bottom: 0.75em !important;
+}
+
+.prose h1 { font-size: 2rem !important; line-height: 1.25 !important; }
+.prose h2 { font-size: 1.5rem !important; line-height: 1.3 !important; border-bottom: 1px solid #D0D5DD; padding-bottom: 0.4rem; }
+.prose h3 { font-size: 1.25rem !important; line-height: 1.4 !important; }
+
+.prose p {
+    color: #1D2939 !important;
+    font-size: 1rem !important;
+    line-height: 1.75 !important;
+    margin-bottom: 1.25em !important;
+}
+
+.prose blockquote {
+    border-left: 3px solid #1348DC !important;
+    padding-left: 1rem !important;
+    color: #344054 !important;
+    font-style: italic !important;
+    margin: 1.5em 0 !important;
+}
+
+.prose code:not(pre code) {
+    font-family: var(--font-mono) !important;
+    background-color: #F2F4F7 !important;
+    color: #1348DC !important;
+    border: 1px solid #D0D5DD !important;
+    padding: 0.15rem 0.35rem !important;
+    border-radius: 3px !important;
+    font-size: 0.875em !important;
+}
+
+.prose pre {
+    background-color: #F8F9FC !important;
+    border: 1px solid #D0D5DD !important;
+    border-radius: 4px !important;
+    padding: 1.25rem !important;
+    overflow-x: auto !important;
+    margin: 1.5em 0 !important;
+}
+
+.prose pre code {
+    font-family: var(--font-mono) !important;
+    color: #1D2939 !important;
+    font-size: 0.875rem !important;
+    line-height: 1.6 !important;
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+.prose a {
+    color: #1348DC !important;
+    text-decoration: underline !important;
+    text-underline-offset: 3px !important;
+    font-weight: 500 !important;
+}
+
+.prose a:hover {
+    color: #0F39AD !important;
+}
+
+.prose ul, .prose ol {
+    color: #1D2939 !important;
+    padding-left: 1.5rem !important;
+    margin-bottom: 1.25em !important;
+}
+
+.prose li {
+    margin-bottom: 0.35em !important;
+}
+
