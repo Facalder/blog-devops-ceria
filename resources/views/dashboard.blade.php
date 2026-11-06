@@ -5,6 +5,10 @@
     $totalCategories = \App\Models\Category::count();
     $totalUsers = \App\Models\User::count();
     $recentPosts = \App\Models\Post::with(['user', 'category'])->latest()->take(5)->get();
+    $publicationRate = \App\Support\PublicationStatistics::percentage(
+        $publishedPosts,
+        $totalPosts
+    );
 @endphp
 
 <x-layouts::app :title="__('Dashboard Overview')">
@@ -51,6 +55,48 @@
                 <div class="font-mono text-xs uppercase tracking-wider text-tertiary">Kategori</div>
                 <div class="font-serif text-3xl font-light text-on-surface">{{ $totalCategories }}</div>
                 <div class="text-xs text-tertiary">Kategori aktif</div>
+            </x-card>
+        </div>
+
+        
+        {{-- Publication Monitoring --}}
+        <div class="space-y-4">
+            <div>
+                <h2 class="font-serif text-xl font-light text-on-surface">
+                    Monitoring Publikasi
+                </h2>
+                <p class="text-xs text-tertiary">
+                    Statistik publikasi artikel pada CMS
+                </p>
+            </div>
+
+            <x-card class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-tertiary">
+                        Tingkat Publikasi Artikel
+                    </span>
+
+                    <span class="text-2xl font-semibold text-primary">
+                        {{ $publicationRate }}%
+                    </span>
+                </div>
+
+                <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                    <div
+                        class="bg-green-600 h-3 rounded-full"
+                        style="width: {{ $publicationRate }}%">
+                    </div>
+                </div>
+
+                <div class="flex justify-between text-xs text-tertiary">
+                    <span>
+                        {{ $publishedPosts }} artikel diterbitkan
+                    </span>
+
+                    <span>
+                        {{ $totalPosts - $publishedPosts }} artikel belum diterbitkan
+                    </span>
+                </div>
             </x-card>
         </div>
 
