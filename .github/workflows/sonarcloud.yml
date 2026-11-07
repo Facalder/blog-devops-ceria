@@ -11,6 +11,10 @@ on:
       - main
       - dev
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   pull-requests: read
@@ -33,12 +37,6 @@ jobs:
           coverage: pcov
           tools: composer:v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-
       - name: Cache Composer Dependencies
         uses: actions/cache@v4
         with:
@@ -46,20 +44,11 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
-      - name: Cache Node Dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node-
-
       - name: Setup Application Environment
         run: |
           cp .env.example .env
           composer install --prefer-dist --no-interaction --no-progress
           php artisan key:generate
-          npm ci
-          npm run build
           touch database/database.sqlite
           php artisan migrate --force
 
