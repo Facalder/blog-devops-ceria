@@ -31,6 +31,22 @@ Sesuai dengan ketentuan Rubrik 3 UTS DevOps, pipeline GitHub Actions ([`.github/
   npm audit fix
   ```
 
+### C. Repository Vulnerability & Secret Scanning (`Trivy`)
+- **Fungsi**: Melakukan pemindaian mendalam (*deep scan*) pada filesystem repositori untuk mendeteksi kerentanan CVE pada seluruh pustaka serta mendeteksi kebocoran kredensial/token (*secret scanning*).
+- **Implementasi di Pipeline**:
+  ```yaml
+  - name: Run Trivy Security & Vulnerability Scanner
+    uses: aquasecurity/trivy-action@v0.36.0
+    continue-on-error: true
+    with:
+      scan-type: 'fs'
+      scan-ref: '.'
+      scanners: 'vuln,secret'
+      severity: 'CRITICAL,HIGH'
+      format: 'table'
+      exit-code: '0'
+  ```
+
 ---
 
 ## 🔑 2. Kebijakan Secret Management

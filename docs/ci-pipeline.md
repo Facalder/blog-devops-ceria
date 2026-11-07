@@ -58,10 +58,11 @@ flowchart TD
   - `npm run build`: Mengompilasi aset melalui Vite Plus (`vp build`).
 
 ### 3. Stage: DevSecOps Dependency Security Audit (`dependency-check`)
-- **Tujuan**: Memindai kerentanan keamanan (*vulnerabilities*) pada paket dependensi *third-party* yang terdaftar pada ekosistem PHP dan Node.js.
+- **Tujuan**: Memindai kerentanan keamanan (*vulnerabilities*) pada paket dependensi *third-party* yang terdaftar pada ekosistem PHP dan Node.js serta memindai repositori dari kebocoran token/secret.
 - **Tools**:
   - `composer audit --locked`: Memeriksa database kerentanan keamanan resmi *Packagist Advisory Database*.
   - `npm audit --audit-level=high`: Memeriksa kerentanan keamanan berisiko tinggi (*high/critical*) pada paket NPM.
+  - `aquasecurity/trivy-action@v0.36.0`: Memindai kerentanan level HIGH & CRITICAL serta mendeteksi kebocoran *secret/credential*.
 
 ### 4. Stage: Automated Testing & Code Coverage (`test-and-coverage`)
 - **Tujuan**: Menjalankan seluruh *unit test* dan *feature test* secara otomatis dalam lingkungan replikasi produksi, serta mengukur persentase *code coverage*.

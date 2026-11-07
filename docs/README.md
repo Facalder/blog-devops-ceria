@@ -6,25 +6,32 @@ Dokumentasi ini disusun untuk memenuhi seluruh kriteria dan rubrik **Ujian Tenga
 
 ## 📚 Daftar Isi Dokumentasi
 
-1. [Arsitektur CI/CD Pipeline](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/ci-pipeline.md)
+1. [Rencana Strategis & Master Plan CI/CD](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/ci-cd-planning.md)
+   - Perencanaan komprehensif CI/CD, DevSecOps, dan Quality Gate sesuai rubrik UTS DevOps.
+   - Matriks capaian nilai maksimal (Skor 4), pembagian 3 perubahan fungsional per anggota, dan jadwal fase eksekusi.
+   - Aturan operasional ketat (Strict Rules): tata kelola Git Flow, konvensi commit, zero-comment policy, zero hardcoded credentials, dan ambang batas test coverage.
+   - Hal-hal kritis yang perlu diperhatikan (Watch-outs & Pitfalls): sinkronisasi lockfile, batasan memori PHPStan/PCOV, penanganan dependency CVE, dan pengarsipan bukti laporan.
+   - Definisi kesiapan (Definition of Done) sebelum konfigurasi lanjutan.
+
+2. [Arsitektur CI/CD Pipeline](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/ci-pipeline.md)
    - Penjelasan alur pipeline multi-stage pada GitHub Actions.
    - Konfigurasi job: *Code Quality*, *Frontend Build*, *DevSecOps Dependency Check*, *Testing & Coverage*, dan *SonarQube Analysis*.
    - Diagram alur kerja pipeline.
 
-2. [Threat Modeling STRIDE](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/threat-modeling-stride.md)
+3. [Threat Modeling STRIDE](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/threat-modeling-stride.md)
    - Analisis keamanan mendalam menggunakan 6 pilar STRIDE (*Spoofing*, *Tampering*, *Repudiation*, *Information Disclosure*, *Denial of Service*, *Elevation of Privilege*).
    - Pemetaan ancaman ke komponen aplikasi, tingkat risiko, dan implementasi mitigasi di Laravel.
 
-3. [DevSecOps & Secret Management](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/devsecops-and-secret-management.md)
+4. [DevSecOps & Secret Management](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/devsecops-and-secret-management.md)
    - Praktik audit dependensi berkala (`composer audit` dan `npm audit`).
    - Panduan pengelolaan secrets & zero-hardcoded credentials menggunakan GitHub Secrets.
    - Kebijakan *Branch Protection* & *Code Review* pada branch utama (`main`).
 
-4. [SonarQube & Strategi Testing](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/sonarqube-and-testing.md)
+5. [SonarQube & Strategi Testing](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/sonarqube-and-testing.md)
    - Konfigurasi `sonar-project.properties` dan integrasi ke SonarQube/SonarCloud.
    - Strategi testing menggunakan Pest 5 & PHPUnit dengan target code coverage > 50% via driver PCOV.
 
-5. [Template Laporan Proyek UTS](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/laporan-uts-template.md)
+6. [Template Laporan Proyek UTS](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/laporan-uts-template.md)
    - Struktur laporan lengkap mencakup 7 bagian wajib: Deskripsi Aplikasi, CI Pipeline, Perubahan Aplikasi, Testing, Analisis Kualitas Kode, Analisis DevSecOps, dan Retrospektif Tim.
 
 ---

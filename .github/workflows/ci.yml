@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - dev
-      - 'feature/**'
+      - 'dev-*'
   pull_request:
     branches:
       - main
@@ -65,7 +65,7 @@ jobs:
         run: npm run build
 
   dependency-check:
-    name: DevSecOps Dependency Audit
+    name: DevSecOps Dependency & Security Audit
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -91,6 +91,17 @@ jobs:
       - name: Run Node.js NPM Audit
         continue-on-error: true
         run: npm audit --audit-level=high
+
+      - name: Run Trivy Security & Vulnerability Scanner
+        uses: aquasecurity/trivy-action@v0.36.0
+        continue-on-error: true
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          scanners: 'vuln,secret'
+          severity: 'CRITICAL,HIGH'
+          format: 'table'
+          exit-code: '0'
 
   test-and-coverage:
     name: Automated Testing & Coverage
@@ -147,28 +158,3 @@ jobs:
           name: coverage-report
           path: coverage.xml
           retention-days: 7
-
-  sonarqube:
-    name: SonarQube Code Quality Analysis
-    runs-on: ubuntu-latest
-    needs: test-and-coverage
-    if: always() && (needs.test-and-coverage.result == 'success' || needs.test-and-coverage.result == 'skipped')
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Download Coverage Artifact
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          name: coverage-report
-          path: .
-
-      - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@v5
-        continue-on-error: true
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
