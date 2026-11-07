@@ -75,3 +75,31 @@ jobs:
             phpstan-report.json
           retention-days: 7
 
+      - name: Generate SonarCloud & Quality Gate Report Summary
+        if: always()
+        run: |
+          echo "## 📊 SonarCloud Quality & Test Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f .scannerwork/report-task.txt ]; then
+            DASHBOARD_URL=$(grep 'dashboardUrl=' .scannerwork/report-task.txt | cut -d'=' -f2-)
+            CE_TASK_ID=$(grep 'ceTaskId=' .scannerwork/report-task.txt | cut -d'=' -f2-)
+            echo "### 🚀 SonarCloud Analysis" >> $GITHUB_STEP_SUMMARY
+            echo "- **Dashboard URL**: [View Analysis on SonarCloud]($DASHBOARD_URL)" >> $GITHUB_STEP_SUMMARY
+            echo "- **Project Key**: \`devops-ceria_blog-devops-ceria\`" >> $GITHUB_STEP_SUMMARY
+            echo "- **Task ID**: \`$CE_TASK_ID\`" >> $GITHUB_STEP_SUMMARY
+            echo "- **Quality Gate Wait**: \`Enabled (timeout: 300s)\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ -f phpstan-report.json ]; then
+            TOTAL_ERRORS=$(python3 -c "import json; d=json.load(open('phpstan-report.json')); print(d.get('totals', {}).get('file_errors', 0))" 2>/dev/null || echo "0")
+            echo "### 🛡️ Static Analysis (PHPStan)" >> $GITHUB_STEP_SUMMARY
+            echo "- **Errors Found**: \`$TOTAL_ERRORS\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ -f coverage.xml ]; then
+            echo "### 🧪 Code Coverage & Test Execution" >> $GITHUB_STEP_SUMMARY
+            echo "- **Coverage Clover Report**: \`coverage.xml\` (Generated)" >> $GITHUB_STEP_SUMMARY
+            echo "- **JUnit Execution Report**: \`test-report.xml\` (Generated)" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
