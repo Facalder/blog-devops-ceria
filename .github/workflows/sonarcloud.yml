@@ -6,12 +6,14 @@ on:
       - main
       - dev
   pull_request:
+    types: [opened, synchronize, reopened]
     branches:
       - main
       - dev
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
   sonarcloud:
@@ -61,11 +63,26 @@ jobs:
           touch database/database.sqlite
           php artisan migrate --force
 
-      - name: Run Pest Tests with Coverage Report
-        run: vendor/bin/pest --coverage --coverage-clover=coverage.xml
+      - name: Run PHPStan Security & Static Analysis
+        run: vendor/bin/phpstan analyse --error-format=json --no-progress > phpstan-report.json || true
 
-      - name: SonarCloud Scan
+      - name: Run Pest Tests with Coverage & JUnit Reports
+        run: vendor/bin/pest --coverage --coverage-clover=coverage.xml --log-junit=test-report.xml
+
+      - name: SonarCloud Code & Security Scan
         uses: sonarsource/sonarqube-scan-action@v5
         continue-on-error: true
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Upload Security & Coverage Artifacts
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: sonarcloud-reports
+          path: |
+            coverage.xml
+            test-report.xml
+            phpstan-report.json
+          retention-days: 7
+
