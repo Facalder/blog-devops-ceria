@@ -1,6 +1,18 @@
 # Dokumentasi Pipeline CI/CD: Multi-Stage GitHub Actions
 
-Dokumentasi ini menjelaskan konfigurasi dan alur kerja pipeline *Continuous Integration* (CI) yang diimplementasikan pada repositori ini menggunakan GitHub Actions ([`.github/workflows/ci.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/ci.yml)).
+Dokumentasi ini menjelaskan konfigurasi dan alur kerja pipeline *Continuous Integration* (CI) dan *DevSecOps* yang diimplementasikan secara modular pada repositori ini menggunakan GitHub Actions melalui workflow-workflow terisolasi:
+- **CI Workflows**:
+  - [`.github/workflows/ci-code-quality.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/ci-code-quality.yml) (Laravel Pint & PHPStan Level 7)
+  - [`.github/workflows/ci-frontend-build.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/ci-frontend-build.yml) (Vite Plus Asset Build)
+  - [`.github/workflows/ci-testing.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/ci-testing.yml) (Pest 5 Automated Testing & PCOV Coverage)
+  - [`.github/workflows/sonarcloud.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/sonarcloud.yml) (SonarCloud Code Quality & Gate)
+- **DevSecOps Workflows (6 Penanggung Jawab)**:
+  - [`.github/workflows/devsecops-01-pipeline-integrity.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-01-pipeline-integrity.yml) (PIC: Anggota 1)
+  - [`.github/workflows/devsecops-02-composer-audit.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-02-composer-audit.yml) (PIC: Anggota 2)
+  - [`.github/workflows/devsecops-03-npm-audit.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-03-npm-audit.yml) (PIC: Anggota 3)
+  - [`.github/workflows/devsecops-04-secret-scan.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-04-secret-scan.yml) (PIC: Anggota 4)
+  - [`.github/workflows/devsecops-05-sast-vulnerability.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-05-sast-vulnerability.yml) (PIC: Anggota 5)
+  - [`.github/workflows/devsecops-06-stride-compliance.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-06-stride-compliance.yml) (PIC: Anggota 6)
 
 ---
 
