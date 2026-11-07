@@ -1,0 +1,60 @@
+name: CI Automated Testing & Coverage
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - 'dev-*'
+  pull_request:
+    branches:
+      - main
+      - dev
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test-and-coverage:
+    name: Automated Testing & Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP with PCOV Coverage
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, json, libxml
+          coverage: pcov
+          tools: composer:v2
+
+      - name: Cache Composer Dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Setup Application Environment
+        run: |
+          cp .env.example .env
+          composer install --prefer-dist --no-interaction --no-progress
+          php artisan key:generate
+          touch database/database.sqlite
+          php artisan migrate --force
+
+      - name: Run Pest Tests with Coverage Report
+        run: vendor/bin/pest --coverage --coverage-clover=coverage.xml
+
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
+          retention-days: 7
