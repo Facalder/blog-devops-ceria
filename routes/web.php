@@ -55,15 +55,12 @@ Route::get('/blog/{post:slug}', function (Post $post) {
 Route::middleware(['auth'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 
-    // Management Blog
     Route::get('dashboard/posts', PostsIndex::class)->name('posts.index');
     Route::get('dashboard/posts/create', PostsCreate::class)->name('posts.create');
     Route::get('dashboard/posts/{post}/edit', PostsEdit::class)->name('posts.edit');
 
-    // Management Categories
     Route::get('dashboard/categories', CategoriesIndex::class)->name('categories.index');
 
-    // Management Users
     Route::get('dashboard/users', UsersIndex::class)->name('users.index');
 });
 

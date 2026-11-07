@@ -1,5 +1,4 @@
 <div class="space-y-6">
-    {{-- Header --}}
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border-subtle pb-5">
         <div>
             <h1 class="font-serif text-3xl font-light text-on-surface">Management Blog</h1>
@@ -15,14 +14,12 @@
         </div>
     </div>
 
-    {{-- Alert Flash --}}
     @if (session('status'))
         <div class="rounded-[2px] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
             {{ session('status') }}
         </div>
     @endif
 
-    {{-- Filters --}}
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div class="w-full sm:max-w-xs">
             <x-input
@@ -54,7 +51,6 @@
         </div>
     </div>
 
-    {{-- Posts Table / List --}}
     <div class="overflow-hidden rounded-[2px] border border-border-subtle bg-white">
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">

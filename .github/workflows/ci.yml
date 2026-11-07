@@ -1,0 +1,174 @@
+name: CI/CD Pipeline & DevSecOps
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - 'feature/**'
+  pull_request:
+    branches:
+      - main
+      - dev
+
+permissions:
+  contents: read
+
+jobs:
+  code-quality:
+    name: Code Style & Static Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+          coverage: none
+
+      - name: Cache Composer Dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Composer Dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Run Laravel Pint (Code Style / Lint)
+        run: vendor/bin/pint --test
+
+      - name: Run PHPStan / Larastan (Static Analysis)
+        run: vendor/bin/phpstan analyse --memory-limit=1G
+
+  frontend-build:
+    name: Frontend Asset Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Compile Frontend Assets (Vite Plus)
+        run: npm run build
+
+  dependency-check:
+    name: DevSecOps Dependency Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+          coverage: none
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Run PHP Composer Audit
+        continue-on-error: true
+        run: composer audit --locked
+
+      - name: Run Node.js NPM Audit
+        continue-on-error: true
+        run: npm audit --audit-level=high
+
+  test-and-coverage:
+    name: Automated Testing & Coverage
+    runs-on: ubuntu-latest
+    needs: [code-quality, frontend-build]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP with PCOV Coverage
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, dom, filter, json, libxml
+          coverage: pcov
+          tools: composer:v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Cache Composer Dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Cache Node Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-
+
+      - name: Setup Application Environment
+        run: |
+          cp .env.example .env
+          composer install --prefer-dist --no-interaction --no-progress
+          php artisan key:generate
+          npm ci
+          npm run build
+          touch database/database.sqlite
+          php artisan migrate --force
+
+      - name: Run Pest Tests with Coverage Report
+        run: vendor/bin/pest --coverage --coverage-clover=coverage.xml
+
+      - name: Upload Coverage Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
+          retention-days: 7
+
+  sonarqube:
+    name: SonarQube Code Quality Analysis
+    runs-on: ubuntu-latest
+    needs: test-and-coverage
+    if: always() && (needs.test-and-coverage.result == 'success' || needs.test-and-coverage.result == 'skipped')
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download Coverage Artifact
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: coverage-report
+          path: .
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v5
+        continue-on-error: true
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}

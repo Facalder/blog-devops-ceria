@@ -1,5 +1,4 @@
 <div class="space-y-6">
-    {{-- Header --}}
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border-subtle pb-5">
         <div>
             <h1 class="font-serif text-3xl font-light text-on-surface">Management User</h1>
@@ -7,14 +6,12 @@
         </div>
     </div>
 
-    {{-- Alert Flash --}}
     @if (session('status'))
         <div class="rounded-[2px] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
             {{ session('status') }}
         </div>
     @endif
 
-    {{-- Filters --}}
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div class="w-full sm:max-w-xs">
             <x-input
@@ -37,7 +34,6 @@
         </div>
     </div>
 
-    {{-- Users Table --}}
     <div class="overflow-hidden rounded-[2px] border border-border-subtle bg-white">
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
@@ -104,7 +100,6 @@
         @endif
     </div>
 
-    {{-- Edit Role Modal --}}
     @if ($showModal)
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
             <div class="w-full max-w-sm rounded-[2px] border border-border-subtle bg-white p-6 shadow-lg">
@@ -137,12 +132,12 @@
                         @enderror
                     </div>
 
-                    <div class="flex items-center justify-end gap-2 pt-3 border-t border-border-subtle">
-                        <x-button type="button" wire:click="$set('showModal', false)" variant="secondary" size="sm">
+                    <div class="flex items-center justify-end gap-2 pt-2 border-t border-border-subtle">
+                        <x-button type="button" wire:click="$set('showModal', false)" variant="secondary">
                             Batal
                         </x-button>
-                        <x-button type="submit" variant="primary" size="sm">
-                            Simpan Perubahan
+                        <x-button type="submit" variant="primary">
+                            Simpan Role
                         </x-button>
                     </div>
                 </form>

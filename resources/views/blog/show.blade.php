@@ -14,7 +14,6 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="min-h-screen bg-white text-on-surface antialiased flex flex-col font-sans">
-        {{-- Top Navigation --}}
         <header class="border-b border-border-subtle bg-white/90 backdrop-blur-xs sticky top-0 z-30">
             <div class="max-w-4xl mx-auto px-5 h-16 flex items-center justify-between">
                 <a href="{{ route('home') }}" class="flex items-center gap-2 group">
@@ -37,10 +36,8 @@
             </div>
         </header>
 
-        {{-- Article Header & Body --}}
         <main class="flex-1 max-w-3xl w-full mx-auto px-5 py-12 md:py-16">
             <article class="space-y-8">
-                {{-- Metadata Top --}}
                 <div class="space-y-4 border-b border-border-subtle pb-8">
                     <div class="flex items-center gap-2 font-mono text-xs text-tertiary">
                         @if ($post->category)
@@ -71,19 +68,16 @@
                     </div>
                 </div>
 
-                {{-- Excerpt / Subheading --}}
                 @if ($post->excerpt)
                     <div class="border-l-2 border-primary pl-4 font-serif text-lg text-on-surface/90 italic">
                         {{ $post->excerpt }}
                     </div>
                 @endif
 
-                {{-- Rendered Markdown Body --}}
                 <div class="prose max-w-none text-base leading-relaxed text-on-surface">
                     {!! $post->html_content !!}
                 </div>
 
-                {{-- Article Footer --}}
                 <div class="pt-10 mt-12 border-t border-border-subtle flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-tertiary">
                     <a href="{{ route('home') }}" class="text-primary hover:underline">
                         &larr; Kembali ke daftar artikel
@@ -95,7 +89,6 @@
             </article>
         </main>
 
-        {{-- Minimal Footer --}}
         <footer class="border-t border-border-subtle bg-surface py-8 mt-auto">
             <div class="max-w-4xl mx-auto px-5 text-center font-mono text-xs text-tertiary">
                 &copy; {{ date('Y') }} DevOps Ceria. All content licensed for technical education.

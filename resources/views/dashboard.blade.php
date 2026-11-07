@@ -9,7 +9,6 @@
 
 <x-layouts::app :title="__('Dashboard Overview')">
     <div class="space-y-8">
-        {{-- Header Section --}}
         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border-subtle pb-6">
             <div>
                 <h1 class="font-serif text-3xl font-light text-on-surface">Dashboard CMS</h1>
@@ -27,7 +26,6 @@
             </div>
         </div>
 
-        {{-- Stats Grid --}}
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <x-card class="space-y-1">
                 <div class="font-mono text-xs uppercase tracking-wider text-tertiary">Total Artikel</div>
@@ -54,7 +52,6 @@
             </x-card>
         </div>
 
-        {{-- Recent Posts Table --}}
         <div class="space-y-4">
             <div class="flex items-center justify-between">
                 <div>
@@ -129,7 +126,6 @@
             </div>
         </div>
 
-        {{-- Quick Management Cards --}}
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
             <x-card :href="route('posts.index')" wire:navigate hoverable="true" class="space-y-2">
                 <div class="flex items-center justify-between">

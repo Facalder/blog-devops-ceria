@@ -33,8 +33,22 @@ yarn-error.log
 /.kiro
 /.pi
 /.mcp.json
-/AGENTS.md
-/CLAUDE.md
 /boost.json
 /opencode.json
 /opencode.jsonc
+
+# Specific ignored files
+/DevOps - UTS 25262.md
+
+# Ignore all markdown files
+*.md
+
+# Except markdown files required for AI context and project documentation
+!AGENTS.md
+!CLAUDE.md
+!DESIGN.md
+!docs/**/*.md
+!docs/*.md
+!**/.ai/**/*.md
+!**/.cursor/**/*.md
+!**/.github/copilot-instructions.md

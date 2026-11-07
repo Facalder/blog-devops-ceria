@@ -1,5 +1,4 @@
 <form wire:submit="save" class="space-y-6">
-    {{-- Header --}}
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-border-subtle pb-5">
         <div class="flex items-center gap-3">
             <x-button :href="route('posts.index')" wire:navigate size="sm" variant="secondary">
@@ -14,7 +13,6 @@
         </div>
     </div>
 
-    {{-- Validation Errors Summary --}}
     @if ($errors->any())
         <div class="rounded-[2px] border border-red-200 bg-red-50 p-4 text-sm text-[#E45757]">
             <div class="font-medium font-mono text-xs uppercase mb-1">Terdapat kesalahan pengisian:</div>
@@ -27,7 +25,6 @@
     @endif
 
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {{-- Main Editor Section (2 cols) --}}
         <div class="space-y-5 lg:col-span-2">
             <div>
                 <label class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
@@ -80,7 +77,6 @@
             </div>
         </div>
 
-        {{-- Publish Sidebar (1 col) --}}
         <div class="space-y-5">
             <x-card class="space-y-5">
                 <div class="border-b border-border-subtle pb-3">
@@ -94,16 +90,13 @@
                     <div class="space-y-2">
                         <label class="flex items-center gap-2 text-sm text-on-surface cursor-pointer">
                             <input type="radio" wire:model="status" value="draft" class="text-primary focus:ring-primary" />
-                            <span>Simpan sebagai Draft</span>
+                            <span>Draf (Hanya Admin)</span>
                         </label>
                         <label class="flex items-center gap-2 text-sm text-on-surface cursor-pointer">
                             <input type="radio" wire:model="status" value="published" class="text-primary focus:ring-primary" />
-                            <span>Publikasikan Sekarang</span>
+                            <span>Publikasikan ke Pembaca</span>
                         </label>
                     </div>
-                    @error('status')
-                        <p class="mt-1 text-xs text-[#E45757]">{{ $message }}</p>
-                    @enderror
                 </div>
 
                 <div>
@@ -114,7 +107,7 @@
                         wire:model="category_id"
                         class="w-full rounded-[2px] border border-border-subtle bg-white px-3 py-2 text-sm text-on-surface focus:border-primary focus:outline-hidden focus:ring-1 focus:ring-primary"
                     >
-                        <option value="">Pilih Kategori (Opsional)</option>
+                        <option value="">Pilih Kategori...</option>
                         @foreach ($this->categories as $category)
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
@@ -124,9 +117,12 @@
                     @enderror
                 </div>
 
-                <div class="pt-3 border-t border-border-subtle">
-                    <x-button type="submit" variant="primary" class="w-full">
+                <div class="pt-4 border-t border-border-subtle flex flex-col gap-2">
+                    <x-button type="submit" variant="primary" class="w-full justify-center">
                         Simpan Artikel
+                    </x-button>
+                    <x-button :href="route('posts.index')" wire:navigate variant="secondary" class="w-full justify-center">
+                        Batal
                     </x-button>
                 </div>
             </x-card>

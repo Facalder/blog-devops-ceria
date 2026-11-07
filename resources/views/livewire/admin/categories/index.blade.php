@@ -1,5 +1,4 @@
 <div class="space-y-6">
-    {{-- Header --}}
     <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border-subtle pb-5">
         <div>
             <h1 class="font-serif text-3xl font-light text-on-surface">Management Kategori</h1>
@@ -15,14 +14,12 @@
         </div>
     </div>
 
-    {{-- Alert Flash --}}
     @if (session('status'))
         <div class="rounded-[2px] border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
             {{ session('status') }}
         </div>
     @endif
 
-    {{-- Search Filter --}}
     <div class="w-full sm:max-w-xs">
         <x-input
             type="search"
@@ -31,7 +28,6 @@
         />
     </div>
 
-    {{-- Categories Table --}}
     <div class="overflow-hidden rounded-[2px] border border-border-subtle bg-white">
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
@@ -93,7 +89,6 @@
         @endif
     </div>
 
-    {{-- Create / Edit Modal --}}
     @if ($showModal)
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
             <div class="w-full max-w-md rounded-[2px] border border-border-subtle bg-white p-6 shadow-lg">
@@ -133,20 +128,20 @@
 
                     <div>
                         <label class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1">
-                            Deskripsi Singkat
+                            Deskripsi
                         </label>
-                        <x-textarea wire:model="description" rows="3" placeholder="Opsional penjelasan kategori..." />
+                        <x-textarea wire:model="description" rows="3" placeholder="Opsional, penjelasan kategori..." />
                         @error('description')
                             <p class="mt-1 text-xs text-[#E45757]">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <div class="flex items-center justify-end gap-2 pt-3 border-t border-border-subtle">
-                        <x-button type="button" wire:click="$set('showModal', false)" variant="secondary" size="sm">
+                    <div class="flex items-center justify-end gap-2 pt-2 border-t border-border-subtle">
+                        <x-button type="button" wire:click="$set('showModal', false)" variant="secondary">
                             Batal
                         </x-button>
-                        <x-button type="submit" variant="primary" size="sm">
-                            Simpan Kategori
+                        <x-button type="submit" variant="primary">
+                            Simpan
                         </x-button>
                     </div>
                 </form>

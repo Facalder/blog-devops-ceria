@@ -1,5 +1,4 @@
 <form wire:submit="save" class="space-y-6">
-    {{-- Header --}}
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-border-subtle pb-5">
         <div class="flex items-center gap-3">
             <x-button :href="route('posts.index')" wire:navigate size="sm" variant="secondary">
@@ -14,7 +13,6 @@
         </div>
     </div>
 
-    {{-- Validation Errors Summary --}}
     @if ($errors->any())
         <div class="rounded-[2px] border border-red-200 bg-red-50 p-4 text-sm text-[#E45757]">
             <div class="font-medium font-mono text-xs uppercase mb-1">Terdapat kesalahan pengisian:</div>
@@ -27,7 +25,6 @@
     @endif
 
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {{-- Main Editor Section (2 cols) --}}
         <div class="space-y-5 lg:col-span-2">
             <div>
                 <label class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
@@ -80,7 +77,6 @@
             </div>
         </div>
 
-        {{-- Publish Sidebar (1 col) --}}
         <div class="space-y-5">
             <x-card class="space-y-5">
                 <div class="border-b border-border-subtle pb-3">
