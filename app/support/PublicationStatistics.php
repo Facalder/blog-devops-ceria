@@ -17,4 +17,16 @@ class PublicationStatistics
             2
         );
     }
+    public static function status(float $percentage): string
+    {
+        if ($percentage >= 80) {
+            return 'Tinggi';
+        }
+
+        if ($percentage >= 50) {
+            return 'Sedang';
+        }
+
+        return 'Rendah';
+    }
 }

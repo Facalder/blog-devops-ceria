@@ -9,6 +9,9 @@
         $publishedPosts,
         $totalPosts
     );
+    $publicationStatus = \App\Support\PublicationStatistics::status(
+        $publicationRate
+    );
 @endphp
 
 <x-layouts::app :title="__('Dashboard Overview')">
@@ -98,6 +101,12 @@
                     </span>
                 </div>
             </x-card>
+            <p class="text-sm text-tertiary">
+                Status Publikasi:
+                <span class="font-semibold text-primary">
+                    {{ $publicationStatus }}
+                </span>
+            </p>
         </div>
 
         {{-- Recent Posts Table --}}
