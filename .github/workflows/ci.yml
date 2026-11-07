@@ -82,7 +82,7 @@ jobs:
         run: npm run build
 
   dependency-check:
-    name: DevSecOps Dependency & Security Audit
+    name: DevSecOps Dependency Audit
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
