@@ -14,7 +14,6 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="min-h-screen bg-[#F8F9FC] text-on-surface antialiased flex flex-col font-sans">
-        {{-- Top Navigation --}}
         <header class="border-b border-border-subtle bg-white sticky top-0 z-30 shadow-2xs">
             <div class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
                 <a href="{{ route('home') }}" class="flex items-center gap-2.5 group">
@@ -54,7 +53,6 @@
             </div>
         </header>
 
-        {{-- Hero Header --}}
         <section class="border-b border-border-subtle bg-white py-14 sm:py-16">
             <div class="max-w-4xl mx-auto px-5 text-center">
                 <div class="inline-flex items-center gap-2 mb-4">
@@ -67,7 +65,6 @@
                     Eksplorasi teknis praktis seputar cloud native, Kubernetes, CI/CD pipelines, dan software craftsmanship yang ditulis langsung oleh para engineer.
                 </p>
 
-                {{-- Search Bar --}}
                 <form method="GET" action="{{ route('home') }}" class="mt-8 max-w-lg mx-auto flex items-center gap-2">
                     @if ($selectedCategorySlug)
                         <input type="hidden" name="category" value="{{ $selectedCategorySlug }}">
@@ -95,7 +92,6 @@
                     </x-button>
                 </form>
 
-                {{-- Category Filter Chips --}}
                 @if ($categories->isNotEmpty())
                     <div class="mt-6 flex flex-wrap items-center justify-center gap-2">
                         <a
@@ -118,9 +114,7 @@
             </div>
         </section>
 
-        {{-- Main Content: Kumpulan Blog --}}
         <main class="flex-1 max-w-6xl w-full mx-auto px-5 py-10 sm:py-12">
-            {{-- Header Feed Status --}}
             <div class="flex items-center justify-between pb-6 mb-6 border-b border-border-subtle">
                 <div class="flex items-center gap-2">
                     <h2 class="font-serif text-2xl font-light text-on-surface">
@@ -144,7 +138,6 @@
                 @endif
             </div>
 
-            {{-- Articles Grid --}}
             @if ($posts->isNotEmpty())
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach ($posts as $post)
@@ -152,7 +145,6 @@
                     @endforeach
                 </div>
 
-                {{-- Pagination --}}
                 @if ($posts->hasPages())
                     <div class="mt-12 pt-8 border-t border-border-subtle">
                         {{ $posts->links() }}
@@ -184,7 +176,6 @@
             @endif
         </main>
 
-        {{-- Footer --}}
         <footer class="border-t border-border-subtle bg-white py-10 mt-auto">
             <div class="max-w-6xl mx-auto px-5 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-tertiary">
                 <div class="flex items-center gap-3">

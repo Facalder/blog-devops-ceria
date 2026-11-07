@@ -1,66 +1,63 @@
 @props([
-    'placeholder' => 'Tulis konten dalam format markdown...',
-    'minHeight' => '360px',
-    'error' => null,
+    'wireModelName' => 'content',
+    'placeholder' => 'Tulis konten dalam format Markdown...',
 ])
 
-@php
-    $wireModelName = $attributes->wire('model')->value() ?: 'content';
-@endphp
-
 <div
+    wire:ignore
     x-data="{
         tab: 'write',
-        content: @entangle($attributes->wire('model')),
+        content: @entangle($wireModelName),
         previewHtml: '',
-        init() {
-            this.$watch('content', () => {
-                if (this.tab === 'preview') {
-                    this.renderPreview();
-                }
-            });
-        },
-        insert(before, after = '') {
+        insert(prefix, suffix = '') {
             const textarea = this.$refs.editorTextarea;
+            if (!textarea) return;
+
             const start = textarea.selectionStart;
             const end = textarea.selectionEnd;
-            const selectedText = textarea.value.substring(start, end);
-            const replacement = before + (selectedText || 'teks') + after;
-            
-            textarea.setRangeText(replacement, start, end, 'select');
+            const text = textarea.value;
+            const selected = text.substring(start, end);
+
+            const replacement = prefix + selected + suffix;
+            textarea.value = text.substring(0, start) + replacement + text.substring(end);
+
             this.content = textarea.value;
-            textarea.dispatchEvent(new Event('input', { bubbles: true }));
+
             textarea.focus();
+            const cursorPos = start + prefix.length + selected.length;
+            textarea.setSelectionRange(cursorPos, cursorPos);
         },
         renderPreview() {
-            if (!this.content) {
-                this.previewHtml = '<p class=\'text-tertiary text-sm italic\'>Belum ada konten untuk ditampilkan.</p>';
+            if (!this.content || this.content.trim() === '') {
+                this.previewHtml = '<p class=\'text-tertiary italic text-sm\'>Belum ada konten untuk dipratinjau.</p>';
                 return;
             }
 
-            // Lightweight client-side markdown parsing
-            let html = this.content
+            let text = this.content
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+
+            let html = text
+                .replace(/```([\s\S]*?)```/g, '<pre class=\'bg-surface p-3 rounded font-mono text-xs overflow-x-auto my-3 border border-border-subtle\'><code>$1</code></pre>')
+                .replace(/`([^`]+)`/g, '<code class=\'bg-surface px-1.5 py-0.5 rounded font-mono text-xs text-primary border border-border-subtle\'>$1</code>')
                 .replace(/^### (.*$)/gim, '<h3 class=\'font-serif text-lg font-normal text-on-surface mt-4 mb-2\'>$1</h3>')
-                .replace(/^## (.*$)/gim, '<h2 class=\'font-serif text-xl font-normal text-on-surface mt-5 mb-2 border-b border-border-subtle pb-1\'>$1</h2>')
+                .replace(/^## (.*$)/gim, '<h2 class=\'font-serif text-xl font-normal text-on-surface mt-6 mb-2 border-b border-border-subtle pb-1\'>$1</h2>')
                 .replace(/^# (.*$)/gim, '<h1 class=\'font-serif text-2xl font-light text-on-surface mt-6 mb-3\'>$1</h1>')
-                .replace(/^\> (.*$)/gim, '<blockquote class=\'border-l-2 border-primary pl-3 py-1 my-2 text-tertiary italic\'>$1</blockquote>')
-                .replace(/\*\*(.*?)\*\*/gim, '<strong class=\'font-semibold text-on-surface\'>$1</strong>')
-                .replace(/\*(.*?)\*/gim, '<em class=\'italic\'>$1</em>')
-                .replace(/`([^`]+)`/gim, '<code class=\'font-mono text-xs bg-surface border border-border-subtle px-1.5 py-0.5 rounded text-primary\'>$1</code>')
-                .replace(/```([\s\S]*?)```/gim, '<pre class=\'font-mono text-xs bg-surface border border-border-subtle p-3 rounded-[2px] overflow-x-auto my-3\'><code>$1</code></pre>')
-                .replace(/\[([^\]]+)\]\(([^)]+)\)/gim, '<a href=\'$2\' target=\'_blank\' class=\'text-primary underline\'>$1</a>')
-                .replace(/^\- (.*$)/gim, '<li class=\'ml-4 list-disc text-sm\'>$1</li>')
-                .replace(/^\d+\. (.*$)/gim, '<li class=\'ml-4 list-decimal text-sm\'>$1</li>')
-                .replace(/\n\n/gim, '<br/><br/>');
+                .replace(/\*\*([^*]+)\*\*/g, '<strong class=\'font-semibold text-on-surface\'>$1</strong>')
+                .replace(/\*([^*]+)\*/g, '<em class=\'italic\'>$1</em>')
+                .replace(/^> (.*$)/gim, '<blockquote class=\'border-l-2 border-primary pl-3 my-2 text-on-surface/80 italic\'>$1</blockquote>')
+                .replace(/^\- (.*$)/gim, '<li class=\'ml-4 list-disc text-on-surface\'>$1</li>')
+                .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href=\'$2\' target=\'_blank\' rel=\'noopener\' class=\'text-primary underline hover:text-primary-hover\'>$1</a>')
+                .replace(/\n\n/g, '<p class=\'my-3 text-on-surface leading-relaxed\'></p>')
+                .replace(/\n/g, '<br />');
 
             this.previewHtml = html;
         }
     }"
     class="w-full space-y-2"
 >
-    {{-- Editor Toolbar & Tabs --}}
     <div class="flex flex-wrap items-center justify-between border border-border-subtle bg-surface px-2.5 py-1.5 rounded-t-[2px]">
-        {{-- Formatting Toolbar --}}
         <div class="flex flex-wrap items-center gap-1">
             <button
                 type="button"
@@ -139,7 +136,6 @@
             </button>
         </div>
 
-        {{-- Write / Preview Tab Switcher --}}
         <div class="flex items-center gap-1 border border-border-subtle bg-white p-0.5 rounded-[2px]">
             <button
                 type="button"
@@ -160,7 +156,6 @@
         </div>
     </div>
 
-    {{-- Textarea & Preview Areas --}}
     <div class="relative">
         <div x-show="tab === 'write'">
             <textarea
@@ -182,7 +177,6 @@
         </div>
     </div>
 
-    {{-- Error message outside wire:ignore --}}
     @error($wireModelName)
         <p class="mt-1 text-xs text-[#E45757] font-mono">{{ $message }}</p>
     @enderror
