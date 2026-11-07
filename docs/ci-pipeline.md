@@ -53,6 +53,7 @@ flowchart TD
 ### 2. Stage: Frontend Asset Build (`frontend-build`)
 - **Tujuan**: Memverifikasi bahwa seluruh aset JavaScript, Tailwind CSS v4, dan komponen UI Blaze/Flux berhasil di-bundle tanpa kegagalan kompilasi.
 - **Tools**:
+  - PHP 8.4 dengan Composer v2 (untuk dependensi Flux UI CSS di `vendor/livewire/flux`).
   - Node.js versi 22.
   - `npm ci`: Menginstal dependensi NPM secara deterministik.
   - `npm run build`: Mengompilasi aset melalui Vite Plus (`vp build`).
