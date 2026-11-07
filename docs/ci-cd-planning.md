@@ -206,7 +206,9 @@ flowchart TD
 
 Untuk menjamin kelancaran kolaborasi tim, kepatuhan terhadap rubrik UTS, dan integritas pipeline CI/CD, seluruh anggota tim wajib mematuhi 5 pilar aturan operasional berikut:
 
-### 7.1 Aturan 1: Tata Kelola Git, Branching & Proteksi Cabang
+### 7.1 Aturan 1: Tata Kelola Git, Branching & Proteksi Cabang (Rulesets-as-Code)
+Konfigurasi proteksi branch didefinisikan sebagai kode (*Rulesets-as-Code*) pada [`.github/rulesets/main-ruleset.json`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/rulesets/main-ruleset.json) untuk branch `main` dan [`.github/rulesets/dev-ruleset.json`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/rulesets/dev-ruleset.json) untuk branch `dev`, serta dapat diterapkan melalui skrip [`scripts/setup-rulesets.sh`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/scripts/setup-rulesets.sh).
+
 1. **Hierarki Cabang**:
    - `main`: Branch produksi dan rilis stabil. Kode di branch ini harus selalu siap rilis (*deployable*).
    - `dev`: Branch integrasi bersama. Tempat penggabungan seluruh branch fitur sebelum masuk ke `main`.
@@ -219,7 +221,7 @@ Untuk menjamin kelancaran kolaborasi tim, kepatuhan terhadap rubrik UTS, dan int
    - **Dismiss Stale Approvals**: Setiap ada commit baru yang di-push ke branch PR, approval sebelumnya otomatis dibatalkan dan wajib direview ulang.
 4. **Status Checks Wajib Lolos (Strict Green Policy)**:
    - PR tidak dapat di-merge jika salah satu job pipeline CI berstatus merah (*Failed*).
-   - Checks wajib: `Code Style & Static Analysis`, `Frontend Asset Build`, `DevSecOps Dependency Audit`, dan `Automated Testing & Coverage`.
+   - Checks wajib: `Code Style & Static Analysis`, `Frontend Asset Build`, `DevSecOps Dependency Audit`, `Automated Testing & Coverage`, dan `SonarCloud Code Quality Analysis`.
 5. **Strategi Merge**:
    - Mengutamakan metode *Squash and Merge* atau *Rebase and Merge* agar riwayat commit pada branch utama tetap bersih, linier, dan mudah diperiksa oleh evaluator/dosen.
 6. **Proteksi Integritas Git History**:

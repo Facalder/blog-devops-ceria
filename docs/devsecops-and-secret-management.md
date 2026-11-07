@@ -75,29 +75,45 @@ Tidak diperkenankan menyimpan kredensial sensitif (*API key*, *database password
 
 ---
 
-## 🛡️ 3. Branch Protection & Code Review Rules
+## 🛡️ 3. Branch Protection & Ruleset Configuration (Branch `main` & `dev`)
 
-Untuk menjamin kualitas dan keamanan kode yang masuk ke branch utama (`main` dan `dev`), repository dikonfigurasi dengan aturan proteksi cabang (*Branch Protection Rules*).
+Repositori ini telah menyediakan konfigurasi GitHub Rulesets berbasis kode (*Rulesets-as-Code*) di dalam direktori [`.github/rulesets/`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/rulesets) serta skrip otomasi API di [`scripts/setup-rulesets.sh`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/scripts/setup-rulesets.sh).
 
-### Konfigurasi Branch Protection pada GitHub:
-Buka `Settings -> Branches -> Add branch protection rule` untuk branch `main`:
+### A. Rincian Konfigurasi Ruleset per Branch
 
-1. **Require a pull request before merging**:
-   - Centang opsi: *Require a pull request before merging*.
-   - **Require approvals**: Minimal **1 reviewer** wajib memberikan *approval* sebelum PR dapat di-merge.
-   - **Dismiss stale pull request approvals when new commits are pushed**: Aktifkan agar commit baru memerlukan review ulang.
-2. **Require status checks to pass before merging**:
-   - Centang opsi: *Require status checks to pass before merging*.
-   - Centang: *Require branches to be up to date before merging*.
-   - Pilih *Status Checks* wajib dari workflow CI:
-     - `Code Style & Static Analysis`
-     - `Frontend Asset Build`
-     - `Automated Testing & Coverage`
-     - `DevSecOps Dependency Audit`
-3. **Do not allow bypassing the above settings**:
-   - Berlaku untuk seluruh anggota tim dan Administrator.
-4. **Prevent force pushes** & **Prevent deletions**:
-   - Mencegah manipulasi git history pada branch `main`.
+| Parameter Aturan | Branch `main` (Produksi & Rilis) | Branch `dev` (Integrasi & Staging) |
+|---|---|---|
+| **File Konfigurasi** | [`.github/rulesets/main-ruleset.json`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/rulesets/main-ruleset.json) | [`.github/rulesets/dev-ruleset.json`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/rulesets/dev-ruleset.json) |
+| **Target Cabang** | `refs/heads/main` | `refs/heads/dev` |
+| **Status Enforcement** | `active` | `active` |
+| **Restrict Deletions** | Aktif (Mencegah penghapusan cabang) | Aktif (Mencegah penghapusan cabang) |
+| **Restrict Force Pushes** | Aktif (Mencegah rewrite history `git push --force`) | Aktif (Mencegah rewrite history `git push --force`) |
+| **Require Linear History** | Aktif (Mewajibkan rebase/squash merge) | Non-aktif (Boleh merge commit) |
+| **Pull Request Requirements** | Minimal **1 review approval**, dismiss stale reviews on push, require last push approval, resolve threads | Minimal **1 review approval**, dismiss stale reviews on push, resolve threads |
+| **Metode Merge Diizinkan** | `squash`, `rebase` | `merge`, `squash`, `rebase` |
+| **Required Status Checks** | 1. `Code Style & Static Analysis`<br/>2. `Frontend Asset Build`<br/>3. `DevSecOps Dependency Audit`<br/>4. `Automated Testing & Coverage`<br/>5. `SonarCloud Code Quality Analysis` | 1. `Code Style & Static Analysis`<br/>2. `Frontend Asset Build`<br/>3. `DevSecOps Dependency Audit`<br/>4. `Automated Testing & Coverage` |
+| **Strict Up-to-Date Policy** | Aktif (Wajib update branch sebelum merge) | Aktif (Wajib update branch sebelum merge) |
+| **Bypass Rules** | **Tidak ada bypass** (Berlaku ketat bagi admin & owner) | Repository Admin (Bypass mode always untuk darurat) |
+
+### B. Cara Menerapkan Ruleset ke Repositori GitHub
+
+Tersedia dua metode penerapan yang dapat dipilih:
+
+#### Metode 1: Import File JSON via GitHub Web UI (Direkomendasikan)
+1. Buka repositori GitHub: `https://github.com/Facalder/blog-devops-ceria`
+2. Masuk ke tab **Settings** -> pilih menu **Rules** -> klik **Rulesets**.
+3. Klik tombol dropdown hijau **New ruleset** di pojok kanan atas, lalu pilih **Import a ruleset**.
+4. Pilih file [`.github/rulesets/main-ruleset.json`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/rulesets/main-ruleset.json). Seluruh form akan otomatis terisi.
+5. Klik **Create** untuk mengaktifkan ruleset branch `main`.
+6. Ulangi langkah di atas untuk mengimpor [`.github/rulesets/dev-ruleset.json`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/rulesets/dev-ruleset.json).
+
+#### Metode 2: Penerapan Otomatis via API Script
+Jalankan skrip yang telah disiapkan dengan menyertakan GitHub Personal Access Token (PAT) yang memiliki permission `Administration: Read & Write`:
+```bash
+GITHUB_TOKEN="ghp_your_personal_access_token_here" ./scripts/setup-rulesets.sh
+```
+
+---
 
 ### Standar Alur Kerja Tim (Git Flow):
 ```text
