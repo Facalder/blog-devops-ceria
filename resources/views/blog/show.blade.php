@@ -48,6 +48,10 @@
                         <span>&bull;</span>
                         <span>{{ $post->reading_time }} menit membaca</span>
                         <span>&bull;</span>
+                        <a href="#comments" class="hover:text-primary transition-colors">
+                            {{ $post->comments_count ?? $post->comments()->count() }} komentar
+                        </a>
+                        <span>&bull;</span>
                         <time datetime="{{ $post->published_at?->toDateString() }}">
                             {{ $post->published_at?->format('d F Y') }}
                         </time>
@@ -87,6 +91,8 @@
                     </div>
                 </div>
             </article>
+
+            <livewire:blog.comments :post="$post" />
         </main>
 
         <footer class="border-t border-border-subtle bg-surface py-8 mt-auto">
