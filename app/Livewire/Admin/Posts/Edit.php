@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Posts;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Services\PostSlugGenerator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
@@ -59,8 +60,8 @@ class Edit extends Component
 
     public function save(): void
     {
-        if (empty($this->slug) && ! empty($this->title)) {
-            $this->slug = Str::slug($this->title);
+        if (trim($this->slug) === '' && trim($this->title) !== '') {
+            $this->slug = app(PostSlugGenerator::class)->generate($this->title, $this->post->id);
         }
 
         if (empty($this->category_id)) {
