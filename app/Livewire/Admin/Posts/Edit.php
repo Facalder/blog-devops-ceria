@@ -4,10 +4,10 @@ namespace App\Livewire\Admin\Posts;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Services\PostExcerptGenerator;
 use App\Services\PostSlugGenerator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -74,7 +74,7 @@ class Edit extends Component
         $this->post->slug = $validated['slug'];
         $this->post->category_id = $validated['category_id'] ? (int) $validated['category_id'] : null;
         $this->post->content = $validated['content'];
-        $this->post->excerpt = $validated['excerpt'] ?: Str::limit(strip_tags($validated['content']), 160);
+        $this->post->excerpt = $validated['excerpt'] ?: app(PostExcerptGenerator::class)->generate($validated['content']);
 
         if ($this->post->status !== 'published' && $validated['status'] === 'published') {
             $this->post->published_at = now();

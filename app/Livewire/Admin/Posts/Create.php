@@ -4,11 +4,11 @@ namespace App\Livewire\Admin\Posts;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Services\PostExcerptGenerator;
 use App\Services\PostSlugGenerator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
@@ -65,8 +65,6 @@ class Create extends Component
 
     public function save(): void
     {
-        $slugIsAuto = $this->slug === '' || $this->slug === Str::slug($this->title);
-
         if (! $this->slugEdited && trim($this->title) !== '') {
             $this->slug = app(PostSlugGenerator::class)->generate($this->title);
         }
@@ -83,7 +81,7 @@ class Create extends Component
         $post->slug = $validated['slug'];
         $post->category_id = $validated['category_id'] ? (int) $validated['category_id'] : null;
         $post->content = $validated['content'];
-        $post->excerpt = $validated['excerpt'] ?: Str::limit(strip_tags($validated['content']), 160);
+        $post->excerpt = $validated['excerpt'] ?: app(PostExcerptGenerator::class)->generate($validated['content']);
         $post->status = $validated['status'];
         $post->published_at = $validated['status'] === 'published' ? now() : null;
         $post->save();
