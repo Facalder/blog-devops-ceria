@@ -51,3 +51,21 @@ Pada model [`app/Models/User.php`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOp
 Pada komponen pembuatan artikel ([`app/Livewire/Admin/Posts/Create.php`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/app/Livewire/Admin/Posts/Create.php)):
 - Aturan validasi didefinisikan secara deklaratif di backend, mencegah *Tampering* via modifikasi payload browser.
 - Relasi artikel secara otomatis dikaitkan dengan `auth()->id()`, mencegah pengguna memalsukan *author* artikel (*Spoofing*).
+
+---
+
+## 🧪 Otomasi Pengujian Keamanan STRIDE pada Pipeline CI
+
+Seluruh mitigasi 6 kategori STRIDE diuji secara otomatis menggunakan Pest test suite:
+- **File Test**: [`tests/Feature/Security/StrideThreatModelingTest.php`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/tests/Feature/Security/StrideThreatModelingTest.php)
+- **Workflow Pipeline**: [`.github/workflows/devsecops-stride-tests.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-stride-tests.yml)
+
+| Kode Test | Kategori STRIDE | Perilaku yang Diverifikasi Secara Otomatis |
+|:---|:---|:---|
+| `STRIDE-S` | **Spoofing** | Pengunjung tanpa autentikasi tidak dapat mengakses endpoint dashboard dan dipaksa redirect ke login. |
+| `STRIDE-T` | **Tampering** | Validasi backend menolak payload kosong atau ID kategori ilegal (`exists:categories,id`). |
+| `STRIDE-R` | **Repudiation** | Pembuatan dan update artikel mewajibkan kepemilikan author (`user_id`) dan timestamp audit (`created_at`, `updated_at`). |
+| `STRIDE-I` | **Information Disclosure** | Kredensial pengguna (`password`, token) tersembunyi dari serialisasi, dan artikel draft tidak bisa dibuka publik (HTTP 404). |
+| `STRIDE-D` | **Denial of Service** | Pengambilan artikel dibatasi oleh paginasi ketat (maksimal 9 artikel per halaman) mencegah *memory exhaustion*. |
+| `STRIDE-E` | **Elevation of Privilege** | Pengguna unauthenticated ditolak dari seluruh route pengelolaan artikel, kategori, dan pengguna. |
+

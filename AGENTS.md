@@ -23,6 +23,18 @@
 - **Design System**: See `DESIGN.md` for UI tokens, palette (Zed Dev Light: `#1348DC` primary, serif headlines, writer/monospace body, sharp radii), and component specifications.
 - **Skills Available**: Domain skills exist in `.agents/skills/` and `.claude/skills/` (`fortify-development`, `livewire-development`, `fluxui-development`, `tailwindcss-development`, `laravel-best-practices`, `testing-best-practices`, `deploying-to-cloud`).
 
+## DevSecOps & STRIDE Threat Modeling
+- **Threat Modeling Framework**: Proyek ini menerapkan framework STRIDE secara penuh (*Spoofing*, *Tampering*, *Repudiation*, *Information Disclosure*, *Denial of Service*, *Elevation of Privilege*).
+- **Automated Security Test Suite**: Seluruh mitigasi STRIDE diverifikasi secara otomatis pada file `tests/Feature/Security/StrideThreatModelingTest.php`.
+- **Workflow CI**: Dijalankan otomatis melalui `.github/workflows/devsecops-stride-tests.yml` dan menjadi status check wajib pada branch protection ruleset.
+- **Threat Mapping Guide**: Panduan analisis dan mitigasi lengkap terdokumentasi di `docs/devsecops/threat-modeling-stride.md`.
+
+## Mandatory Test Cases for Every Change (UTS Requirement)
+- **Minimal 3 Test Cases per Perubahan**: Setiap penambahan fitur, perubahan logika bisnis, atau pembuatan fungsi baru WAJIB menyertakan minimal 3 test cases menggunakan Pest (mencakup *happy path*, *negative/validation path*, dan *edge case / authorization*).
+- **Pemenuhan Rubrik UTS**: Ketentuan ini wajib ditaati untuk memenuhi skor maksimal (Sangat Baik) pada Rubrik 2 Poin 3 (*Test cases per perubahan: > 3 test cases per fitur*).
+- **Eksekusi & Verifikasi**: Setiap selesai menulis atau mengedit test, jalankan segera `vendor/bin/pest <path-to-test>` dan pastikan passing 100% tanpa regresi.
+- **Integrasi Keamanan**: Apabila perubahan menyangkut endpoint publik atau modul autentikasi/akses, sertakan skenario pengujian mitigasi ancaman STRIDE yang relevan.
+
 ## Strict Zero-Comment Policy
 - **NO COMMENTS ALLOWED**: Dilarang keras menambahkan komentar apa pun saat membuat, men-generate, maupun memodifikasi kode (baik inline `//`, block `/* */`, Blade `{{-- --}}`, YAML/shell `#`, maupun docblock non-esensial).
 - **Hapus Seluruh Komentar**: Selalu hapus komentar yang ada pada kode dan konfigurasi setup.
@@ -134,10 +146,11 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 # Test Enforcement
 
+- Always create at least 3 Pest test cases for every new feature, function, or logical change (happy path, validation/negative path, and edge case/authorization).
 - Add or update tests for behavior and logic changes when a test provides meaningful regression coverage.
 - Pure copy, styling, and layout-only changes do not require new or updated tests.
 - When test coverage applies, run the affected tests and ensure they pass.
-- Test the changed behavior and its important failure modes, but do not add tests beyond them.
+- Test the changed behavior and its important failure modes, including STRIDE security implications when relevant.
 - Read the `testing-best-practices` skill before writing tests.
 
 === laravel/core rules ===
