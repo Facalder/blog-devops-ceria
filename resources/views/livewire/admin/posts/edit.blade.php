@@ -206,13 +206,11 @@
             <div class="flex items-center justify-between border-b border-border-subtle px-6 py-4 bg-white">
                 <div class="flex items-center gap-3">
                     <div
-                        class="size-7 rounded-[4px] border flex items-center justify-center font-mono text-xs font-semibold {{ $modalMode === 'rollback' ? 'bg-red-50 border-red-200 text-[#B42318]' : 'bg-primary-tint border-primary/20 text-primary' }}">
+                        class="size-7 rounded-[4px] bg-primary-tint border border-primary/20 flex items-center justify-center font-mono text-xs font-semibold text-primary">
                         #{{ $selectedRevisionNumber ?? '' }}
                     </div>
                     <div>
-                        <h3 class="font-serif text-lg font-light text-on-surface">
-                            {{ $modalMode === 'rollback' ? 'Konfirmasi Rollback' : 'Inspeksi Perubahan Versi' }}
-                        </h3>
+                        <h3 class="font-serif text-lg font-light text-on-surface">Inspeksi Perubahan Versi</h3>
                         <p class="font-mono text-xs text-tertiary">{{ $diffStats }}</p>
                     </div>
                 </div>
@@ -221,12 +219,6 @@
                     &times;
                 </button>
             </div>
-
-            @if ($modalMode === 'rollback')
-            <div class="border-b border-red-200 bg-red-50 px-6 py-2.5 text-xs text-[#B42318] font-mono">
-                Konten artikel saat ini akan digantikan dengan Versi #{{ $selectedRevisionNumber }}.
-            </div>
-            @endif
 
             <div
                 class="flex-1 overflow-y-auto p-6 md:p-8 bg-white font-sans text-sm sm:text-base leading-relaxed text-[#242529] whitespace-pre-wrap selection:bg-[#EEF2FD]">
@@ -245,19 +237,27 @@
                 </div>
 
                 <div class="flex items-center gap-2">
-                    @if ($modalMode === 'rollback')
-                    <span class="text-xs text-tertiary">Gantikan konten saat ini?</span>
-                    <x-button type="button" wire:click="closeDiff" variant="secondary" size="sm">
-                        Batal
-                    </x-button>
-                    <x-button type="button" wire:click="restoreRevision({{ $selectedRevisionId }})" variant="primary"
-                        size="sm" class="bg-[#E45757] hover:bg-[#cf4242]">
-                        Ya, Pulihkan Versi Ini
-                    </x-button>
+                    @if ($confirmingRestore)
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-xs text-tertiary">Gantikan konten saat ini?</span>
+                        <x-button type="button" wire:click="$set('confirmingRestore', false)" variant="secondary"
+                            size="sm">
+                            Batal
+                        </x-button>
+                        <x-button type="button" wire:click="restoreRevision({{ $selectedRevisionId }})"
+                            variant="primary" size="sm" class="bg-[#E45757] hover:bg-[#cf4242]">
+                            Ya, Pulihkan Versi Ini
+                        </x-button>
+                    </div>
                     @else
                     <x-button type="button" wire:click="closeDiff" variant="secondary" size="sm">
                         Tutup
                     </x-button>
+                    @if ($selectedRevisionId)
+                    <x-button type="button" wire:click="$set('confirmingRestore', true)" variant="primary" size="sm">
+                        Pulihkan Versi Ini
+                    </x-button>
+                    @endif
                     @endif
                 </div>
             </div>

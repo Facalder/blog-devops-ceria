@@ -42,16 +42,13 @@ class Edit extends Component
 
     public ?int $selectedRevisionId = null;
 
-    public ?int $selectedRevisionNumber = null;
-
     public string $diffHtml = '';
 
     public string $diffStats = '';
 
-    /**
-     * Mode modal revisi: 'diff' (hanya melihat) atau 'rollback' (konfirmasi pemulihan).
-     */
-    public string $modalMode = 'diff';
+    public bool $confirmingRestore = false;
+
+    public ?int $selectedRevisionNumber = null;
 
     public function mount(Post $post): void
     {
@@ -144,39 +141,35 @@ class Edit extends Component
         $this->redirect(route('posts.index'), navigate: true);
     }
 
-    /**
-     * Buka modal dalam mode diff (hanya melihat perubahan).
-     */
     public function viewDiff(int $revisionId): void
     {
-        $this->openRevisionModal($revisionId, 'diff');
-    }
+        /** @var PostRevision|null $revision */
+        $revision = $this->post->revisions()->where('id', $revisionId)->first();
 
-    /**
-     * Buka modal dalam mode rollback (meminta konfirmasi pemulihan).
-     */
-    public function startRollbackFromSidebar(int $revisionId): void
-    {
-        $this->openRevisionModal($revisionId, 'rollback');
+        if ($revision === null) {
+            return;
+        }
+
+        $this->selectedRevisionId = $revisionId;
+        $diffEngine = new TextDiffEngine;
+        $diff = $diffEngine->calculateDiff($revision->content, $this->content);
+        $this->diffHtml = $diffEngine->renderHtml($diff);
+
+        $stats = $diffEngine->getStatistics($diff);
+        $this->diffStats = "+{$stats['added']} karakter ditambah, -{$stats['removed']} karakter dihapus";
+        $this->showRevisionModal = true;
     }
 
     public function closeDiff(): void
     {
         $this->showRevisionModal = false;
         $this->selectedRevisionId = null;
-        $this->selectedRevisionNumber = null;
-        $this->modalMode = 'diff';
         $this->diffHtml = '';
         $this->diffStats = '';
     }
 
     public function restoreRevision(int $revisionId): void
     {
-        // Pengaman: pemulihan hanya boleh jalan dari modal mode rollback.
-        if ($this->modalMode !== 'rollback' || $this->selectedRevisionId !== $revisionId) {
-            return;
-        }
-
         /** @var PostRevision|null $revision */
         $revision = $this->post->revisions()->where('id', $revisionId)->first();
 
@@ -214,6 +207,9 @@ class Edit extends Component
     /**
      * @return Collection<int, PostRevision>
      */
+    /**
+     * @return Collection<int, PostRevision>
+     */
     #[Computed]
     public function revisions(): Collection
     {
@@ -228,25 +224,9 @@ class Edit extends Component
         return view('livewire.admin.posts.edit');
     }
 
-    protected function openRevisionModal(int $revisionId, string $mode): void
+    public function startRollbackFromSidebar(int $revisionId): void
     {
-        /** @var PostRevision|null $revision */
-        $revision = $this->post->revisions()->where('id', $revisionId)->first();
-
-        if ($revision === null) {
-            return;
-        }
-
-        $this->selectedRevisionId = $revision->id;
-        $this->selectedRevisionNumber = $revision->revision_number;
-        $this->modalMode = $mode;
-
-        $diffEngine = new TextDiffEngine;
-        $diff = $diffEngine->calculateDiff($revision->content, $this->content);
-        $this->diffHtml = $diffEngine->renderHtml($diff);
-
-        $stats = $diffEngine->getStatistics($diff);
-        $this->diffStats = "+{$stats['added']} karakter ditambah, -{$stats['removed']} karakter dihapus";
-        $this->showRevisionModal = true;
+        $this->viewDiff($revisionId);
+        $this->confirmingRestore = true;
     }
 }
