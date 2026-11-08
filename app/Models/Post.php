@@ -90,4 +90,8 @@ class Post extends Model
 
         return max(1, (int) ceil($words / 200));
     }
+        public function revisions(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(PostRevision::class)->orderByDesc('revision_number');
+    }
 }
