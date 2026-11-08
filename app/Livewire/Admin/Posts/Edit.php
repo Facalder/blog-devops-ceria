@@ -8,13 +8,14 @@ use App\Models\Category;
 use App\Models\Post;
 use App\Models\PostRevision;
 use App\Models\User;
+use App\Services\PostExcerptGenerator;
 use App\Services\PostRevisionService;
+use App\Services\PostSlugGenerator;
 use App\Services\TextDiffEngine;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -102,8 +103,8 @@ class Edit extends Component
 
     public function save(): void
     {
-        if (empty($this->slug) && ! empty($this->title)) {
-            $this->slug = Str::slug($this->title);
+        if (trim($this->slug) === '' && trim($this->title) !== '') {
+            $this->slug = app(PostSlugGenerator::class)->generate($this->title, $this->post->id);
         }
 
         if (empty($this->category_id)) {
@@ -117,7 +118,7 @@ class Edit extends Component
         $this->post->slug = $validated['slug'];
         $this->post->category_id = $validated['category_id'] ? (int) $validated['category_id'] : null;
         $this->post->content = $validated['content'];
-        $this->post->excerpt = $validated['excerpt'] ?: Str::limit(strip_tags($validated['content']), 160);
+        $this->post->excerpt = $validated['excerpt'] ?: app(PostExcerptGenerator::class)->generate($validated['content']);
 
         if ($status === 'published') {
             if ($this->post->status !== 'published' || $this->post->published_at === null) {

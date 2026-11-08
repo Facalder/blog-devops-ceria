@@ -4,13 +4,15 @@ namespace App\Livewire\Admin\Posts;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Services\PostExcerptGenerator;
+use App\Services\PostSlugGenerator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -21,6 +23,9 @@ class Create extends Component
     public string $title = '';
 
     public string $slug = '';
+
+    #[Locked]
+    public bool $slugEdited = false;
 
     public ?int $category_id = null;
 
@@ -64,15 +69,22 @@ class Create extends Component
 
     public function updatedTitle(string $value): void
     {
-        if ($this->slug === '' || $this->slug === Str::slug(Str::beforeLast($value, ' '))) {
-            $this->slug = Str::slug($value);
+        if (! $this->slugEdited) {
+            $this->slug = trim($value) === ''
+                ? ''
+                : app(PostSlugGenerator::class)->generate($value);
         }
+    }
+
+    public function updatedSlug(): void
+    {
+        $this->slugEdited = trim($this->slug) !== '';
     }
 
     public function save(): void
     {
-        if (empty($this->slug) && ! empty($this->title)) {
-            $this->slug = Str::slug($this->title);
+        if (! $this->slugEdited && trim($this->title) !== '') {
+            $this->slug = app(PostSlugGenerator::class)->generate($this->title);
         }
 
         if (empty($this->category_id)) {
@@ -88,7 +100,7 @@ class Create extends Component
         $post->slug = $validated['slug'];
         $post->category_id = $validated['category_id'] ? (int) $validated['category_id'] : null;
         $post->content = $validated['content'];
-        $post->excerpt = $validated['excerpt'] ?: Str::limit(strip_tags($validated['content']), 160);
+        $post->excerpt = $validated['excerpt'] ?: app(PostExcerptGenerator::class)->generate($validated['content']);
         $post->status = $status;
         $post->published_at = $status === 'published' ? now() : null;
         $post->scheduled_at = $status === 'scheduled' ? Carbon::parse($validated['scheduled_at']) : null;
