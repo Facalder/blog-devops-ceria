@@ -1,4 +1,4 @@
-name: DevSecOps 2 - Backend PHP Dependency Audit
+name: DevSecOps - NPM Dependency Audit
 
 on:
   push:
@@ -19,20 +19,19 @@ permissions:
   contents: read
 
 jobs:
-  composer-audit:
-    name: DevSecOps PHP Composer Audit
+  npm-audit:
+    name: DevSecOps Node NPM Audit
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          php-version: '8.4'
-          tools: composer:v2
-          coverage: none
+          node-version: '22'
+          cache: 'npm'
 
-      - name: Run PHP Composer Audit
+      - name: Run Node.js NPM Audit
         continue-on-error: true
-        run: composer audit --locked
+        run: npm audit --audit-level=high

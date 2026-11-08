@@ -1,15 +1,15 @@
-# 📋 Blueprint Anggota 4: Secret Security Engineer (Secret Scan & STRIDE I-D-E)
+# 📋 Blueprint Anggota 4: Secret Security Engineer (Secret Management & Leak Detection)
 
 ## 🎯 Identitas Peran
 - **Peran**: Secret Management & Access Security Engineer
-- **Penanggung Jawab Workflow DevSecOps**: [`.github/workflows/devsecops-04-secret-scan.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-04-secret-scan.yml)
-- **Fokus Utama**: Mengelola deteksi kebocoran kredensial rahasia (*Secret Leak Detection* via Trivy), memastikan kebijakan *Zero Hardcoded Credentials*, serta mitigasi ancaman Information Disclosure, DoS, dan Elevation of Privilege (RBAC).
-- **Target Skor Rubrik**: Rubrik 3 Poin 3 (Secret Management) & Rubrik 3 Poin 1 (STRIDE) (Bobot 10% - Sangat Baik).
+- **Penanggung Jawab Workflow DevSecOps**: [`.github/workflows/devsecops-secret-scan.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-secret-scan.yml)
+- **Fokus Utama**: Mengelola deteksi kebocoran kredensial rahasia (*Secret Leak Detection* via Trivy), memastikan kebijakan *Zero Hardcoded Credentials*, serta konfigurasi environment secrets.
+- **Target Skor Rubrik**: Rubrik 3 Poin 3 (Secret Management) (Bobot 10% - Sangat Baik).
 
 ---
 
 ## 🛠️ File Kerja & Tanggung Jawab
-- [`.github/workflows/devsecops-04-secret-scan.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-04-secret-scan.yml)
+- [`.github/workflows/devsecops-secret-scan.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-secret-scan.yml)
 - [`.env.example`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.env.example)
 - [`.gitignore`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.gitignore)
 - [`docs/devsecops/devsecops-and-secret-management.md`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/devsecops/devsecops-and-secret-management.md)
@@ -20,7 +20,7 @@
 ## 📌 Rincian 3 Perubahan Signifikan (Untuk Riwayat Commit & Laporan)
 
 1. **Perubahan 1: Implementasi Pipeline Deteksi Kebocoran Secret (Trivy)**
-   - **File**: `.github/workflows/devsecops-04-secret-scan.yml`
+   - **File**: `.github/workflows/devsecops-secret-scan.yml`
    - **Deskripsi Teknis**: Merancang workflow mandiri menggunakan `aquasecurity/trivy-action` dengan modul `scanners: secret` untuk memindai seluruh file commit dari token/password yang terekspos.
    - **Pesan Commit Contoh**: `sec: establish dedicated devsecops pipeline for automated secret leak scanning`
 

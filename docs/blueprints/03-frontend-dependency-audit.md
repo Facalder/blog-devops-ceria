@@ -1,15 +1,15 @@
-# 📋 Blueprint Anggota 3: Frontend Security Engineer (NPM Audit & STRIDE S-T-R)
+# 📋 Blueprint Anggota 3: Frontend Security Engineer (NPM Dependency Audit & Client Security)
 
 ## 🎯 Identitas Peran
 - **Peran**: Client-Side & Frontend Security Engineer
-- **Penanggung Jawab Workflow DevSecOps**: [`.github/workflows/devsecops-03-npm-audit.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-03-npm-audit.yml)
-- **Fokus Utama**: Mengelola audit keamanan dependensi frontend (Node.js & NPM), mitigasi ancaman Spoofing, Tampering, dan Repudiation, serta sanitasi XSS pada antarmuka publik.
-- **Target Skor Rubrik**: Rubrik 3 Poin 2 (Dependency Check di Pipeline - Node.js: npm audit) & Rubrik 3 Poin 1 (STRIDE) (Bobot 10% - Sangat Baik).
+- **Penanggung Jawab Workflow DevSecOps**: [`.github/workflows/devsecops-npm-audit.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-npm-audit.yml)
+- **Fokus Utama**: Mengelola audit keamanan dependensi frontend (Node.js & NPM), mitigasi ancaman Spoofing dan Tampering sesi, serta sanitasi form antarmuka publik.
+- **Target Skor Rubrik**: Rubrik 3 Poin 2 (Dependency Check di Pipeline - Node.js: npm audit) (Bobot 10% - Sangat Baik).
 
 ---
 
 ## 🛠️ File Kerja & Tanggung Jawab
-- [`.github/workflows/devsecops-03-npm-audit.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-03-npm-audit.yml)
+- [`.github/workflows/devsecops-npm-audit.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-npm-audit.yml)
 - [`package.json`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/package.json)
 - [`package-lock.json`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/package-lock.json)
 - [`app/Actions/Fortify/`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/app/Actions/Fortify/)
@@ -20,7 +20,7 @@
 ## 📌 Rincian 3 Perubahan Signifikan (Untuk Riwayat Commit & Laporan)
 
 1. **Perubahan 1: Implementasi Pipeline Audit Kerentanan Dependensi NPM**
-   - **File**: `.github/workflows/devsecops-03-npm-audit.yml`
+   - **File**: `.github/workflows/devsecops-npm-audit.yml`
    - **Deskripsi Teknis**: Merancang workflow mandiri untuk audit otomatis paket JavaScript menggunakan `npm audit --audit-level=high` pada Node.js 22.
    - **Pesan Commit Contoh**: `sec: establish dedicated devsecops pipeline for node npm dependency audit`
 
