@@ -61,11 +61,8 @@ class Edit extends Component
         $this->status = $post->status;
 
         if ($post->revisions()->count() === 0) {
-            /** @var User|null $author */
-            $author = $post->user ?: Auth::user();
-            if ($author !== null) {
-                (new PostRevisionService)->createRevision($post, $author, 'Inisialisasi baseline artikel');
-            }
+            $author = $post->user;
+            (new PostRevisionService)->createRevision($post, $author, 'Inisialisasi baseline artikel');
         }
     }
 
@@ -186,10 +183,16 @@ class Edit extends Component
     /**
      * @return Collection<int, PostRevision>
      */
+        /**
+     * @return Collection<int, PostRevision>
+     */
     #[Computed]
     public function revisions(): Collection
     {
-        return $this->post->revisions()->with('user')->get();
+        /** @var Collection<int, PostRevision> $result */
+        $result = $this->post->revisions()->with('user')->get();
+
+        return $result;
     }
 
     public function render(): View

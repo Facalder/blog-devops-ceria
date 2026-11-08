@@ -33,17 +33,17 @@ class PostRevisionService
 
         $nextNumber = ((int) $post->revisions()->max('revision_number')) + 1;
         $checksum = $this->diffEngine->computeChecksum(
-            (int) $post->id,
+            max(0, (int) $post->id),
             (string) $post->title,
             (string) $post->content,
-            (int) $actor->id
+            max(0, (int) $actor->id)
         );
 
         $revision = new PostRevision;
-        $revision->post_id = (int) $post->id;
-        $revision->user_id = (int) $actor->id;
-        $revision->category_id = $post->category_id ? (int) $post->category_id : null;
-        $revision->revision_number = $nextNumber;
+        $revision->post_id = max(0, (int) $post->id);
+        $revision->user_id = max(0, (int) $actor->id);
+        $revision->category_id = $post->category_id !== null ? max(0, (int) $post->category_id) : null;
+        $revision->revision_number = max(0, $nextNumber);
         $revision->title = (string) $post->title;
         $revision->slug = (string) $post->slug;
         $revision->content = (string) $post->content;
@@ -61,10 +61,10 @@ class PostRevisionService
     public function verifyIntegrity(PostRevision $revision): bool
     {
         $expectedChecksum = $this->diffEngine->computeChecksum(
-            (int) $revision->post_id,
+            max(0, (int) $revision->post_id),
             (string) $revision->title,
             (string) $revision->content,
-            (int) $revision->user_id
+            max(0, (int) $revision->user_id)
         );
 
         return hash_equals($expectedChecksum, $revision->checksum);

@@ -92,6 +92,9 @@ class Post extends Model
         return max(1, (int) ceil($words / 200));
     }
 
+    /**
+     * @return HasMany<PostRevision, $this>
+     */
     public function revisions(): HasMany
     {
         return $this->hasMany(PostRevision::class)->orderByDesc('revision_number');

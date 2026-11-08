@@ -32,6 +32,9 @@ class TextDiffEngine
         return $this->consolidate($rawDiff);
     }
 
+    /**
+     * @param  list<array{type: 'unchanged'|'added'|'removed', value: string}>  $diff
+     */
     public function renderHtml(array $diff): string
     {
         $html = '';
@@ -91,7 +94,7 @@ class TextDiffEngine
     {
         $tokens = preg_split('/(\s+)/u', $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
-        return $tokens !== false ? array_values($tokens) : [$text];
+        return $tokens !== false ? $tokens : [$text];
     }
 
     /**
