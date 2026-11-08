@@ -1,94 +1,101 @@
-# Dokumentasi & Panduan DevOps: Blog DevOps Ceria
+# 📚 Dokumentasi Master: Blog DevOps Ceria
 
-Dokumentasi ini disusun untuk memenuhi seluruh kriteria dan rubrik **Ujian Tengah Semester (UTS) Mata Kuliah DevOps (CCK4IBB3)** Program Studi S1 Rekayasa Perangkat Lunak, Telkom University.
-
----
-
-## 📚 Daftar Isi Dokumentasi
-
-1. [Rencana Strategis & Master Plan CI/CD](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/ci-cd-planning.md)
-   - Perencanaan komprehensif CI/CD, DevSecOps, dan Quality Gate sesuai rubrik UTS DevOps.
-   - Matriks capaian nilai maksimal (Skor 4), pembagian 3 perubahan fungsional per anggota, dan jadwal fase eksekusi.
-   - Aturan operasional ketat (Strict Rules): tata kelola Git Flow, konvensi commit, zero-comment policy, zero hardcoded credentials, dan ambang batas test coverage.
-   - Hal-hal kritis yang perlu diperhatikan (Watch-outs & Pitfalls): sinkronisasi lockfile, batasan memori PHPStan/PCOV, penanganan dependency CVE, dan pengarsipan bukti laporan.
-   - Definisi kesiapan (Definition of Done) sebelum konfigurasi lanjutan.
-
-2. [Arsitektur CI/CD Pipeline](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/ci-pipeline.md)
-   - Penjelasan alur pipeline multi-stage pada GitHub Actions.
-   - Konfigurasi job: *Code Quality*, *Frontend Build*, *DevSecOps Dependency Check*, *Testing & Coverage*, dan *SonarQube Analysis*.
-   - Diagram alur kerja pipeline.
-
-3. [Threat Modeling STRIDE](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/threat-modeling-stride.md)
-   - Analisis keamanan mendalam menggunakan 6 pilar STRIDE (*Spoofing*, *Tampering*, *Repudiation*, *Information Disclosure*, *Denial of Service*, *Elevation of Privilege*).
-   - Pemetaan ancaman ke komponen aplikasi, tingkat risiko, dan implementasi mitigasi di Laravel.
-
-4. [DevSecOps & Secret Management](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/devsecops-and-secret-management.md)
-   - Praktik audit dependensi berkala (`composer audit` dan `npm audit`).
-   - Panduan pengelolaan secrets & zero-hardcoded credentials menggunakan GitHub Secrets.
-   - Kebijakan *Branch Protection* & *Code Review* pada branch utama (`main`).
-
-5. [SonarQube & Strategi Testing](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/sonarqube-and-testing.md)
-   - Konfigurasi `sonar-project.properties` dan integrasi ke SonarQube/SonarCloud.
-   - Strategi testing menggunakan Pest 5 & PHPUnit dengan target code coverage > 50% via driver PCOV.
-
-6. [Template Laporan Proyek UTS](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/laporan-uts-template.md)
-   - Struktur laporan lengkap mencakup 7 bagian wajib: Deskripsi Aplikasi, CI Pipeline, Perubahan Aplikasi, Testing, Analisis Kualitas Kode, Analisis DevSecOps, dan Retrospektif Tim.
+Dokumentasi ini merupakan pusat panduan arsitektur, operasional tim, konfigurasi CI/CD, dan tata kelola **DevSecOps** pada proyek **Ujian Tengah Semester (UTS) Mata Kuliah DevOps (CCK4IBB3)** Program Studi S1 Rekayasa Perangkat Lunak, Telkom University.
 
 ---
 
-## 🛠️ Ringkasan Tech Stack Aplikasi
+## 🗂️ Struktur Folder Dokumentasi (`/docs`)
 
-- **Backend Framework**: Laravel 13 (PHP 8.4)
-- **Frontend & Reaktivitas**: Livewire 4, Flux UI 2, Tailwind CSS v4, Vite Plus (`vp`)
-- **Autentikasi**: Laravel Fortify
-- **Database**: SQLite (`database/database.sqlite`), in-memory SQLite untuk automated testing
-- **Testing Framework**: Pest 5 & PHPUnit
-- **Static Analysis & Linting**: Larastan / PHPStan (Level 7) & Laravel Pint
-- **CI/CD & DevSecOps Platform**: GitHub Actions, SonarQube / SonarCloud, Composer Audit, NPM Audit
-
----
-
-## 🚀 Panduan Menjalankan Project Secara Lokal
-
-### 1. Prasyarat Sistem
-- PHP >= 8.3 / 8.4 dengan ekstensi: `pdo_sqlite`, `mbstring`, `xml`, `intl`, `curl`
-- Composer >= 2.x
-- Node.js >= 20.x / 22.x & NPM
-
-### 2. Langkah Setup Otomatis
-Jalankan perintah berikut untuk menginisialisasi dependensi, file konfigurasi `.env`, app key, migrasi database, dan build frontend:
-```bash
-composer setup
+```text
+docs/
+├── README.md                           # Indeks master & navigasi seluruh dokumentasi
+├── team-guide/                         # Panduan kolaborasi, alur kerja, & perencanaan tim
+│   ├── panduan-workflow-dan-kolaborasi-tim.md
+│   └── ci-cd-planning.md
+├── blueprints/                         # Blueprint individual tugas 6 anggota tim
+│   ├── README.md
+│   ├── 01-lead-devops-pipeline.md
+│   ├── 02-devsecops-security-engineer.md
+│   ├── 03-security-engineer-stride-str.md
+│   ├── 04-security-engineer-stride-ide.md
+│   ├── 05-feature-developer-comments.md
+│   └── 06-feature-developer-search-filter.md
+├── ci-cd/                              # Arsitektur CI/CD, testing, & code quality
+│   ├── ci-pipeline.md
+│   └── sonarqube-and-testing.md
+├── devsecops/                          # Keamanan aplikasi, STRIDE, audit, & secrets
+│   ├── devsecops-and-secret-management.md
+│   └── threat-modeling-stride.md
+└── reports/                            # Template laporan proyek & outline presentasi
+    └── laporan-uts-template.md
 ```
 
-### 3. Menjalankan Server Pengembangan
-```bash
-composer dev
-```
-Perintah ini akan menjalankan tiga proses sekaligus secara paralel:
-- PHP Development Server (`http://127.0.0.1:8000`)
-- Queue Worker
-- Vite Plus Development Server
+---
 
-### 4. Menjalankan Quality Gate & Testing
-Jalankan validasi CI secara lokal sebelum melakukan push/PR:
-```bash
-composer ci:check
-```
-Perintah di atas mengeksekusi:
-1. `php artisan config:clear` (Membersihkan konfigurasi cache)
-2. `pint --parallel --test` (Pemeriksaan standar coding style)
-3. `phpstan analyse --memory-limit=1G` (Analisis tipe statis PHP)
-4. `php artisan test` (Eksekusi 40+ unit & feature test suites)
+## 📖 Katalog & Akses Cepat Dokumen
+
+### 1. 👥 Panduan Kolaborasi Tim (`docs/team-guide/`)
+- [**Panduan Workflow & Kolaborasi Tim**](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/team-guide/panduan-workflow-dan-kolaborasi-tim.md):  
+  Alur Git Flow dari laptop lokal ke Pull Request, otomasi 10 workflow GitHub Actions di cloud runner, siklus auto re-run saat ada error, prosedur peer review, dan template pesan WhatsApp tim.
+- [**Rencana Strategis & Master Plan CI/CD**](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/team-guide/ci-cd-planning.md):  
+  Cetak biru perencanaan awal, target rubrik skor 4, konvensi commit, dan aturan operasional ketat (*Strict Rules*).
+
+### 2. 📋 Master Blueprints 6 Anggota (`docs/blueprints/`)
+- [**Master Blueprints Index**](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/README.md):  
+  Matriks pembagian peran di mana setiap anggota memegang tanggung jawab atas 1 workflow DevSecOps khusus, minimal 3 perubahan aplikasi/pipeline, dan minimal 3 test cases.
+  - [Blueprint 1: Lead DevOps & Branch Protection Architect](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/01-lead-devops-branch-protection.md)
+  - [Blueprint 2: Backend PHP Composer Audit Engineer](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/02-backend-dependency-audit.md)
+  - [Blueprint 3: Frontend Node NPM Audit Engineer](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/03-frontend-dependency-audit.md)
+  - [Blueprint 4: Secret Leak Detection Engineer](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/04-secret-management-security.md)
+  - [Blueprint 5: Code Quality & SonarQube Engineer](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/05-sonarqube-code-quality.md)
+  - [Blueprint 6: STRIDE Threat Modeling Security Engineer](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/06-stride-threat-modeling.md)
+
+### 3. ⚙️ Arsitektur CI/CD & Testing (`docs/ci-cd/`)
+- [**Arsitektur CI Pipeline Modular**](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/ci-cd/ci-pipeline.md):  
+  Dokumentasi 4 workflow CI terisolasi: linting PSR-12 & static analysis Level 7 ([`ci-code-quality.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/ci-code-quality.yml)), kompilasi aset frontend ([`ci-frontend-build.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/ci-frontend-build.yml)), automated testing dengan PCOV coverage ([`ci-testing.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/ci-testing.yml)), dan evaluasi Quality Gate ([`sonarcloud.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/sonarcloud.yml)).
+- [**SonarQube & Strategi Testing**](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/ci-cd/sonarqube-and-testing.md):  
+  Konfigurasi parameter `sonar-project.properties`, pemetaan direktori pengecualian (*exclusions*), dan strategi pembuatan test cases Pest 5 dengan target coverage > 50%.
+
+### 4. 🛡️ DevSecOps & Keamanan Aplikasi (`docs/devsecops/`)
+- [**Panduan DevSecOps & Secret Management**](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/devsecops/devsecops-and-secret-management.md):  
+  Dokumentasi workflow DevSecOps terpadu, scanner dependensi (`composer audit` & `npm audit`), deteksi kebocoran credential (`Trivy`), pengujian ancaman STRIDE, serta aturan Branch Protection GitHub Rulesets.
+- [**Threat Modeling STRIDE**](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/devsecops/threat-modeling-stride.md):  
+  Analisis ancaman keamanan komprehensif pada 6 pilar (*Spoofing*, *Tampering*, *Repudiation*, *Information Disclosure*, *Denial of Service*, *Elevation of Privilege*) yang dipetakan ke komponen web Laravel.
+
+### 5. 📝 Laporan Proyek & Presentasi (`docs/reports/`)
+- [**Template Laporan Proyek UTS**](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/reports/laporan-uts-template.md):  
+  Format resmi laporan proyek yang mencakup 7 bagian wajib sesuai ketentuan dosen, tabel kontribusi 6 anggota, dan outline menit-ke-menit video YouTube.
 
 ---
 
-## 📊 Matriks Pemetaan Kriteria Penilaian UTS
+## 📊 Matriks Pemetaan Kriteria Penilaian UTS (Bobot 50%)
 
-| Komponen Rubrik | Bobot | Kriteria Kunci | Lokasi Implementasi / Dokumentasi |
+| Komponen Rubrik | Bobot | Kriteria Target (Skor 4 - Sangat Baik) | Dokumen & File Implementasi |
 |---|:---:|---|---|
-| **1. Pipeline CI** | 15% | Multi-stage (Build, Test, Analysis), Best-practice YAML, Test otomatis, SonarQube | `.github/workflows/ci.yml`, `sonar-project.properties`, `docs/ci-pipeline.md` |
-| **2. Perubahan & Kualitas Kode** | 10% | > 3 perubahan signifikan per anggota, zero bugs/vulnerabilities, test cases edge-cases | `docs/laporan-uts-template.md` (Bagian 3) |
-| **3. DevSecOps** | 10% | STRIDE Threat Modeling, Dependency Check (`composer`/`npm audit`), GitHub Secrets, Branch Protection | `docs/threat-modeling-stride.md`, `docs/devsecops-and-secret-management.md` |
-| **4. Dokumentasi & Laporan** | 10% | Laporan 7 bagian lengkap, terstruktur, retrospektif tim, rencana demo video | `docs/laporan-uts-template.md` |
-| **5. Presentasi & Demo** | 5% | Penguasaan materi, demo lancar, kontribusi anggota jelas | `docs/laporan-uts-template.md` (Bagian 7) |
+| **1. Pipeline CI** | 15% | Multi-stage otomatis (Build, Test, Analysis), Best-practice YAML, Test terintegrasi, SonarCloud Gate | [`docs/ci-cd/ci-pipeline.md`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/ci-cd/ci-pipeline.md), `.github/workflows/ci-*.yml` |
+| **2. Perubahan & Kualitas Kode** | 10% | > 3 perubahan signifikan per anggota (6 orang), 0 bugs/vulnerabilities, > 3 test cases per fitur | [`docs/blueprints/`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/), [`docs/reports/laporan-uts-template.md`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/reports/laporan-uts-template.md) |
+| **3. DevSecOps** | 10% | Analisis STRIDE lengkap, Dependency Check (Composer & NPM), Secret Management (Trivy), Branch Protection | [`docs/devsecops/threat-modeling-stride.md`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/devsecops/threat-modeling-stride.md), `.github/workflows/devsecops-*.yml` |
+| **4. Dokumentasi & Laporan** | 10% | Laporan 7 bagian lengkap & terstruktur, outline video demo YouTube, retrospektif tim mendalam | [`docs/reports/laporan-uts-template.md`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/reports/laporan-uts-template.md) |
+| **5. Presentasi & Demo** | 5% | Penguasaan materi, demonstrasi lancar, kontribusi individu terlihat jelas | [`docs/blueprints/`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/), [`docs/team-guide/panduan-workflow-dan-kolaborasi-tim.md`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/team-guide/panduan-workflow-dan-kolaborasi-tim.md) |
+
+---
+
+## 🛠️ Perintah Esensial Developer
+
+- **Setup Awal Proyek**:
+  ```bash
+  composer setup
+  ```
+- **Menjalankan Server Pengembangan (Server + Queue + Vite Plus)**:
+  ```bash
+  composer dev
+  ```
+- **Validasi Kualitas Kode & Testing Lokal (CI Full Gate Check)**:
+  ```bash
+  composer ci:check
+  ```
+- **Audit Keamanan Dependensi Lokal**:
+  ```bash
+  composer audit --locked
+  npm audit --audit-level=high
+  ```
