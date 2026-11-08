@@ -12,6 +12,7 @@ use App\Services\PostRevisionService;
 use App\Services\TextDiffEngine;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -38,6 +39,8 @@ class Edit extends Component
 
     public string $status = 'draft';
 
+    public ?string $scheduled_at = null;
+
     public bool $showRevisionModal = false;
 
     public ?int $selectedRevisionId = null;
@@ -59,6 +62,7 @@ class Edit extends Component
         $this->content = $post->content;
         $this->excerpt = $post->excerpt;
         $this->status = $post->status;
+        $this->scheduled_at = $post->scheduled_at?->format('Y-m-d\TH:i');
 
         if ($post->revisions()->count() === 0) {
             $author = $post->user;
@@ -137,6 +141,26 @@ class Edit extends Component
         (new PostRevisionService)->createRevision($this->post, $actor, 'Pembaruan artikel');
 
         session()->flash('status', 'Artikel berhasil diperbarui.');
+
+        $this->redirect(route('posts.index'), navigate: true);
+    }
+
+    public function cancelSchedule(): void
+    {
+        if ($this->post->status !== 'scheduled') {
+            return;
+        }
+
+        $this->post->status = 'draft';
+        $this->post->scheduled_at = null;
+        $this->post->published_at = null;
+        $this->post->save();
+
+        /** @var User $actor */
+        $actor = Auth::user();
+        (new PostRevisionService)->createRevision($this->post, $actor, 'Pembatalan jadwal publikasi');
+
+        session()->flash('status', 'Jadwal publikasi artikel berhasil dibatalkan.');
 
         $this->redirect(route('posts.index'), navigate: true);
     }
