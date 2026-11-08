@@ -71,3 +71,41 @@ test('editing a post with an emptied slug generates a unique one', function () {
         'slug' => 'judul-edit-baru-2',
     ]);
 });
+
+test('slug follows the title even when the whole title arrives at once', function () {
+    $this->actingAs(User::factory()->create());
+
+    Livewire::test(Create::class)
+        ->set('title', 'judul')
+        ->set('title', 'judul tes 123')
+        ->assertSet('slug', 'judul-tes-123');
+});
+
+test('slug preview is already unique while typing', function () {
+    $this->actingAs(User::factory()->create());
+    Post::factory()->create(['slug' => 'judul']);
+
+    Livewire::test(Create::class)
+        ->set('title', 'Judul')
+        ->assertSet('slug', 'judul-2');
+});
+
+test('slug stops following the title after the author edits it', function () {
+    $this->actingAs(User::factory()->create());
+
+    Livewire::test(Create::class)
+        ->set('title', 'Judul Awal')
+        ->set('slug', 'slug-pilihan')
+        ->set('title', 'Judul Baru')
+        ->assertSet('slug', 'slug-pilihan');
+});
+
+test('slug follows the title again after it is cleared', function () {
+    $this->actingAs(User::factory()->create());
+
+    Livewire::test(Create::class)
+        ->set('slug', 'slug-pilihan')
+        ->set('slug', '')
+        ->set('title', 'Judul Baru')
+        ->assertSet('slug', 'judul-baru');
+});

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -21,6 +22,9 @@ class Create extends Component
     public string $title = '';
 
     public string $slug = '';
+
+    #[Locked]
+    public bool $slugEdited = false;
 
     public ?int $category_id = null;
 
@@ -47,16 +51,23 @@ class Create extends Component
 
     public function updatedTitle(string $value): void
     {
-        if ($this->slug === '' || $this->slug === Str::slug(Str::beforeLast($value, ' '))) {
-            $this->slug = Str::slug($value);
+        if (! $this->slugEdited) {
+            $this->slug = trim($value) === ''
+                ? ''
+                : app(PostSlugGenerator::class)->generate($value);
         }
+    }
+
+    public function updatedSlug(): void
+    {
+        $this->slugEdited = trim($this->slug) !== '';
     }
 
     public function save(): void
     {
         $slugIsAuto = $this->slug === '' || $this->slug === Str::slug($this->title);
 
-        if (trim($this->title) !== '' && $slugIsAuto) {
+        if (! $this->slugEdited && trim($this->title) !== '') {
             $this->slug = app(PostSlugGenerator::class)->generate($this->title);
         }
 
