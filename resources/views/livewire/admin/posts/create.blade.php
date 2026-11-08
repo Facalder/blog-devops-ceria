@@ -27,10 +27,11 @@
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div class="space-y-5 lg:col-span-2">
             <div>
-                <label class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
+                <label for="title" class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
                     Judul Artikel *
                 </label>
                 <input
+                    id="title"
                     type="text"
                     wire:model.live.debounce.400ms="title"
                     placeholder="Masukkan judul artikel..."
@@ -42,12 +43,13 @@
             </div>
 
             <div>
-                <label class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
+                <label for="slug" class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
                     Slug URL *
                 </label>
                 <div class="flex items-center rounded-[2px] border border-border-subtle bg-surface px-3 py-1.5">
                     <span class="font-mono text-xs text-tertiary mr-1">/blog/</span>
                     <input
+                        id="slug"
                         type="text"
                         wire:model="slug"
                         placeholder="judul-artikel"
@@ -84,10 +86,10 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
+                    <span id="status-label" class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
                         Status Artikel
-                    </label>
-                                        <div class="space-y-2">
+                    </span>
+                    <div class="space-y-2" role="radiogroup" aria-labelledby="status-label">
                         <label class="flex items-center gap-2 text-sm text-on-surface cursor-pointer">
                             <input type="radio" wire:model.live="status" value="draft" class="text-primary focus:ring-primary" />
                             <span>Draf (Hanya Admin)</span>
@@ -108,10 +110,11 @@
 
                 @if ($status === 'scheduled')
                     <div>
-                        <label class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
+                        <label for="scheduled_at" class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
                             Waktu Publikasi ({{ config('app.timezone') }}) *
                         </label>
                         <input
+                            id="scheduled_at"
                             type="datetime-local"
                             wire:model="scheduled_at"
                             min="{{ now()->format('Y-m-d\TH:i') }}"
@@ -124,10 +127,11 @@
                 @endif
 
                 <div>
-                    <label class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
+                    <label for="category_id" class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
                         Kategori Artikel
                     </label>
                     <select
+                        id="category_id"
                         wire:model="category_id"
                         class="w-full rounded-[2px] border border-border-subtle bg-white px-3 py-2 text-sm text-on-surface focus:border-primary focus:outline-hidden focus:ring-1 focus:ring-primary"
                     >
