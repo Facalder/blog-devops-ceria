@@ -36,6 +36,7 @@
             >
                 <option value="">Semua Status</option>
                 <option value="published">Published</option>
+                <option value="scheduled">Terjadwal</option>
                 <option value="draft">Draft</option>
             </select>
 
@@ -88,6 +89,11 @@
                             <td class="px-4 py-3.5 whitespace-nowrap">
                                 @if ($post->status === 'published')
                                     <x-badge variant="success">Published</x-badge>
+                                @elseif ($post->status === 'scheduled')
+                                    <x-badge variant="warning">Terjadwal</x-badge>
+                                    <div class="mt-1 font-mono text-[11px] text-tertiary">
+                                        {{ $post->scheduled_at?->format('d M Y H:i') }}
+                                    </div>
                                 @else
                                     <x-badge variant="neutral">Draft</x-badge>
                                 @endif

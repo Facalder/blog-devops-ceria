@@ -44,10 +44,22 @@
             "context": "Frontend Asset Build"
           },
           {
-            "context": "DevSecOps Dependency Audit"
+            "context": "Automated Testing & Coverage"
           },
           {
-            "context": "Automated Testing & Coverage"
+            "context": "DevSecOps Pipeline & Branch Protection Check"
+          },
+          {
+            "context": "DevSecOps PHP Composer Audit"
+          },
+          {
+            "context": "DevSecOps Node NPM Audit"
+          },
+          {
+            "context": "DevSecOps Secret Scanning"
+          },
+          {
+            "context": "DevSecOps STRIDE Security Audit"
           }
         ]
       }

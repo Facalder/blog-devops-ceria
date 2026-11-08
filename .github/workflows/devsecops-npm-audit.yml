@@ -1,0 +1,37 @@
+name: DevSecOps - NPM Dependency Audit
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - 'dev-*'
+  pull_request:
+    branches:
+      - main
+      - dev
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  npm-audit:
+    name: DevSecOps Node NPM Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Run Node.js NPM Audit
+        continue-on-error: true
+        run: npm audit --audit-level=high
