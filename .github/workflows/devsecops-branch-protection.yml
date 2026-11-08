@@ -1,0 +1,40 @@
+name: DevSecOps - Branch Protection & Integrity
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  pipeline-integrity:
+    name: DevSecOps Pipeline & Branch Protection Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Verify Environment Example Integrity
+        run: |
+          test -f .env.example || exit 1
+          grep -q "APP_KEY=" .env.example || exit 1
+
+      - name: Verify Ruleset Configuration Files
+        run: |
+          test -f .github/rulesets/main-ruleset.json || exit 1
+          test -f .github/rulesets/dev-ruleset.json || exit 1
+
+      - name: Verify SonarCloud Configuration
+        run: |
+          test -f sonar-project.properties || exit 1

@@ -61,14 +61,18 @@
                         {{ $post->title }}
                     </h1>
 
-                    <div class="flex items-center gap-3 pt-2">
-                        <div class="size-8 rounded-full bg-primary-tint border border-primary/20 flex items-center justify-center font-mono text-xs text-primary font-medium">
-                            {{ $post->user->initials() }}
+                    <div class="flex items-center justify-between gap-3 pt-2">
+                        <div class="flex items-center gap-3">
+                            <div class="size-8 rounded-full bg-primary-tint border border-primary/20 flex items-center justify-center font-mono text-xs text-primary font-medium">
+                                {{ $post->user->initials() }}
+                            </div>
+                            <div>
+                                <div class="font-medium text-sm text-on-surface">{{ $post->user->name }}</div>
+                                <div class="font-mono text-xs text-tertiary">Penulis Konten &bull; {{ ucfirst($post->user->role) }}</div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="font-medium text-sm text-on-surface">{{ $post->user->name }}</div>
-                            <div class="font-mono text-xs text-tertiary">Penulis Konten &bull; {{ ucfirst($post->user->role) }}</div>
-                        </div>
+
+                        <livewire:bookmark-button :post="$post" />
                     </div>
                 </div>
 
