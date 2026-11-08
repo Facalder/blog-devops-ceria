@@ -6,6 +6,13 @@ use Carbon\Carbon;
 
 class MonthlyPublicationStatistics
 {
+    /**
+     * @param array<int, array{
+     *     status?: string,
+     *     published_at?: string|null
+     * }> $posts
+     * @return array<int, int>
+     */
     public static function countByMonth(array $posts, int $year): array
     {
         $result = array_fill(1, 12, 0);

@@ -4,6 +4,10 @@ namespace App\Support;
 
 class PostStatusStatistics
 {
+    /**
+     * @param  array<int, array{status?: string}>  $posts
+     * @return array{total: int, published: int, draft: int}
+     */
     public static function countByStatus(array $posts): array
     {
         $result = [
