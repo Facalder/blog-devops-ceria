@@ -6,13 +6,13 @@ Dokumen ini memuat panduan implementasi praktik **DevSecOps** pada proyek Blog D
 
 ## 🔒 1. Automated Dependency Security Check di CI Pipeline
 
-Sesuai dengan ketentuan Rubrik 3 UTS DevOps, pipeline keamanan dipecah secara granular menjadi **6 workflow mandiri**, di mana setiap anggota kelompok bertindak sebagai *Person in Charge* (PIC) penanggung jawabnya:
-1. [`.github/workflows/devsecops-01-pipeline-integrity.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-01-pipeline-integrity.yml) - PIC: Anggota 1 (Integritas pipeline, aturan cabang, dan zero-leak config).
-2. [`.github/workflows/devsecops-02-composer-audit.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-02-composer-audit.yml) - PIC: Anggota 2 (Audit kerentanan dependensi backend PHP via `composer audit`).
-3. [`.github/workflows/devsecops-03-npm-audit.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-03-npm-audit.yml) - PIC: Anggota 3 (Audit kerentanan dependensi frontend Node.js via `npm audit`).
-4. [`.github/workflows/devsecops-04-secret-scan.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-04-secret-scan.yml) - PIC: Anggota 4 (Pemindaian kebocoran kredensial dan API keys via Trivy secret scanner).
-5. [`.github/workflows/devsecops-05-sast-vulnerability.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-05-sast-vulnerability.yml) - PIC: Anggota 5 (Static Application Security Testing & deteksi CVE filesystem via Trivy).
-6. [`.github/workflows/devsecops-06-stride-compliance.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-06-stride-compliance.yml) - PIC: Anggota 6 (Otomasi test suite kepatuhan dan mitigasi keamanan STRIDE).
+Sesuai dengan ketentuan Rubrik Penilaian UTS DevOps, pipeline keamanan dan kualitas kode dipetakan secara jelas ke 6 penanggung jawab (*Person in Charge*):
+1. [`.github/workflows/devsecops-branch-protection.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-branch-protection.yml) - PIC: Anggota 1 (Integritas pipeline, aturan cabang, dan zero-leak config).
+2. [`.github/workflows/devsecops-composer-audit.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-composer-audit.yml) - PIC: Anggota 2 (Audit kerentanan dependensi backend PHP via `composer audit`).
+3. [`.github/workflows/devsecops-npm-audit.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-npm-audit.yml) - PIC: Anggota 3 (Audit kerentanan dependensi frontend Node.js via `npm audit`).
+4. [`.github/workflows/devsecops-secret-scan.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-secret-scan.yml) - PIC: Anggota 4 (Pemindaian kebocoran kredensial dan API keys via Trivy secret scanner).
+5. [`.github/workflows/sonarcloud.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/sonarcloud.yml) - PIC: Anggota 5 (Analisis kualitas kode SonarQube & evaluasi Quality Gate).
+6. [`.github/workflows/devsecops-stride-tests.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-stride-tests.yml) - PIC: Anggota 6 (Otomasi test suite kepatuhan dan mitigasi ancaman STRIDE).
 
 ### A. PHP Dependency Audit (`composer audit`)
 - **Fungsi**: Memeriksa file `composer.lock` terhadap database kerentanan resmi *FriendsOfPHP Security Advisories* dan *GitHub Security Advisory Database*.

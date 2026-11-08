@@ -1,4 +1,4 @@
-name: DevSecOps 1 - Pipeline & Branch Integrity
+name: DevSecOps - Branch Protection & Integrity
 
 on:
   push:

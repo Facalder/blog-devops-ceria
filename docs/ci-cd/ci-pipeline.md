@@ -6,13 +6,13 @@ Dokumentasi ini menjelaskan konfigurasi dan alur kerja pipeline *Continuous Inte
   - [`.github/workflows/ci-frontend-build.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/ci-frontend-build.yml) (Vite Plus Asset Build)
   - [`.github/workflows/ci-testing.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/ci-testing.yml) (Pest 5 Automated Testing & PCOV Coverage)
   - [`.github/workflows/sonarcloud.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/sonarcloud.yml) (SonarCloud Code Quality & Gate)
-- **DevSecOps Workflows (6 Penanggung Jawab)**:
-  - [`.github/workflows/devsecops-01-pipeline-integrity.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-01-pipeline-integrity.yml) (PIC: Anggota 1)
-  - [`.github/workflows/devsecops-02-composer-audit.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-02-composer-audit.yml) (PIC: Anggota 2)
-  - [`.github/workflows/devsecops-03-npm-audit.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-03-npm-audit.yml) (PIC: Anggota 3)
-  - [`.github/workflows/devsecops-04-secret-scan.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-04-secret-scan.yml) (PIC: Anggota 4)
-  - [`.github/workflows/devsecops-05-sast-vulnerability.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-05-sast-vulnerability.yml) (PIC: Anggota 5)
-  - [`.github/workflows/devsecops-06-stride-compliance.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-06-stride-compliance.yml) (PIC: Anggota 6)
+- **DevSecOps Workflows (Sesuai Rubrik Evaluasi)**:
+  - [`.github/workflows/devsecops-branch-protection.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-branch-protection.yml) (PIC: Anggota 1 - Branch Protection)
+  - [`.github/workflows/devsecops-composer-audit.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-composer-audit.yml) (PIC: Anggota 2 - Backend Dependency)
+  - [`.github/workflows/devsecops-npm-audit.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-npm-audit.yml) (PIC: Anggota 3 - Frontend Dependency)
+  - [`.github/workflows/devsecops-secret-scan.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-secret-scan.yml) (PIC: Anggota 4 - Secret Management)
+  - [`.github/workflows/sonarcloud.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/sonarcloud.yml) (PIC: Anggota 5 - SonarQube Quality Gate)
+  - [`.github/workflows/devsecops-stride-tests.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-stride-tests.yml) (PIC: Anggota 6 - STRIDE Threat Modeling)
 
 ---
 

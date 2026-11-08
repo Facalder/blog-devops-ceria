@@ -2,7 +2,7 @@
 
 ## 🎯 Identitas Peran
 - **Peran**: Lead DevOps & Access Control Architect
-- **Penanggung Jawab Workflow DevSecOps**: [`.github/workflows/devsecops-01-pipeline-integrity.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-01-pipeline-integrity.yml)
+- **Penanggung Jawab Workflow DevSecOps**: [`.github/workflows/devsecops-branch-protection.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-branch-protection.yml)
 - **Fokus Utama**: Merancang dan memelihara arsitektur CI/CD terpusat, pengujian otomatis, analisis statis, integrasi SonarCloud Quality Gate, dan tata kelola cabang (Branch Protection).
 - **Target Skor Rubrik**: Rubrik 1 (15% - Sangat Baik), Rubrik 3 Poin 4 (Branch Protection & Code Review).
 
@@ -12,7 +12,7 @@
 - [`.github/workflows/ci-code-quality.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/ci-code-quality.yml)
 - [`.github/workflows/ci-frontend-build.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/ci-frontend-build.yml)
 - [`.github/workflows/ci-testing.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/ci-testing.yml)
-- [`.github/workflows/devsecops-01-pipeline-integrity.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-01-pipeline-integrity.yml)
+- [`.github/workflows/devsecops-branch-protection.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-branch-protection.yml)
 - [`.github/workflows/sonarcloud.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/sonarcloud.yml)
 - [`.github/rulesets/main-ruleset.json`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/rulesets/main-ruleset.json)
 - [`.github/rulesets/dev-ruleset.json`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/rulesets/dev-ruleset.json)
@@ -34,7 +34,7 @@
    - **Pesan Commit Contoh**: `ci: configure sonarcloud integration and pcov clover coverage ingestion`
 
 3. **Perubahan 3: Konfigurasi Ruleset Branch Protection & Pipeline Integrity Workflow**
-   - **File**: `.github/workflows/devsecops-01-pipeline-integrity.yml`, `.github/rulesets/main-ruleset.json`, `scripts/setup-rulesets.sh`
+   - **File**: `.github/workflows/devsecops-branch-protection.yml`, `.github/rulesets/main-ruleset.json`, `scripts/setup-rulesets.sh`
    - **Deskripsi Teknis**: Menerapkan workflow verifikasi integritas pipeline dan ruleset cabang yang mewajibkan Pull Request dengan minimal 1 approval reviewer independen sebelum merge.
    - **Pesan Commit Contoh**: `sec: implement devsecops pipeline integrity workflow and branch protection rulesets`
 

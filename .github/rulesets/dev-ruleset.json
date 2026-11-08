@@ -59,9 +59,6 @@
             "context": "DevSecOps Secret Scanning"
           },
           {
-            "context": "DevSecOps Vulnerability Scan"
-          },
-          {
             "context": "DevSecOps STRIDE Security Audit"
           }
         ]

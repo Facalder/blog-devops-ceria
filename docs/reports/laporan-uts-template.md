@@ -12,12 +12,12 @@
 
 | No | NIM | Nama Mahasiswa | Peran Utama | Penanggung Jawab DevSecOps & Fitur |
 |:---:|:---:|:---|:---|:---|
-| 1 | `130XXXXXXXXX` | [Nama Anggota 1] | **Lead DevOps & Pipeline Architect** | **DevSecOps 1**: Pipeline & Branch Protection Integrity (`devsecops-01-pipeline-integrity.yml`) + Rulesets |
-| 2 | `130XXXXXXXXX` | [Nama Anggota 2] | **Backend Security Engineer** | **DevSecOps 2**: Backend PHP Dependency Audit (`devsecops-02-composer-audit.yml` via Composer) |
-| 3 | `130XXXXXXXXX` | [Nama Anggota 3] | **Frontend Security Engineer** | **DevSecOps 3**: Frontend NPM Dependency Audit (`devsecops-03-npm-audit.yml` via NPM) + STRIDE S-T-R |
-| 4 | `130XXXXXXXXX` | [Nama Anggota 4] | **Secret Management Security Engineer** | **DevSecOps 4**: Secret Leak Detection (`devsecops-04-secret-scan.yml` via Trivy) + STRIDE I-D-E |
-| 5 | `130XXXXXXXXX` | [Nama Anggota 5] | **SAST & Vulnerability Engineer** | **DevSecOps 5**: Filesystem CVE & SAST Scan (`devsecops-05-sast-vulnerability.yml`) + Fitur Komentar |
-| 6 | `130XXXXXXXXX` | [Nama Anggota 6] | **Application Hardening & STRIDE Engineer** | **DevSecOps 6**: STRIDE Security Compliance (`devsecops-06-stride-compliance.yml`) + Fitur Search |
+| 1 | `130XXXXXXXXX` | [Nama Anggota 1] | **Lead DevOps & Branch Protection** | **DevSecOps 1**: Pipeline & Branch Protection Integrity (`devsecops-branch-protection.yml`) + Rulesets |
+| 2 | `130XXXXXXXXX` | [Nama Anggota 2] | **Backend Dependency Security** | **DevSecOps 2**: Backend PHP Dependency Audit (`devsecops-composer-audit.yml` via Composer) |
+| 3 | `130XXXXXXXXX` | [Nama Anggota 3] | **Frontend Dependency Security** | **DevSecOps 3**: Frontend NPM Dependency Audit (`devsecops-npm-audit.yml` via NPM) |
+| 4 | `130XXXXXXXXX` | [Nama Anggota 4] | **Secret Management Security Engineer** | **DevSecOps 4**: Secret Leak Detection (`devsecops-secret-scan.yml` via Trivy) |
+| 5 | `130XXXXXXXXX` | [Nama Anggota 5] | **Code Quality & SonarQube Engineer** | **Kualitas Kode**: Integrasi SonarCloud Quality Gate (`sonarcloud.yml`) + Fitur Komentar |
+| 6 | `130XXXXXXXXX` | [Nama Anggota 6] | **STRIDE Threat Modeling Security Engineer** | **DevSecOps 6**: STRIDE Automated Threat Mitigation Tests (`devsecops-stride-tests.yml`) + Fitur Search |
 
 ---
 
@@ -201,7 +201,15 @@ Pengujian dilakukan menggunakan framework **Pest 5** dengan kategori:
 ## 🔐 Bagian 6: Analisis DevSecOps
 
 ### 6.1 Threat Modeling STRIDE
-Seluruh 6 kategori STRIDE (*Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege*) telah dianalisis secara spesifik terhadap fitur Blog DevOps Ceria. (Lihat dokumen lengkap: [`docs/devsecops/threat-modeling-stride.md`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/devsecops/threat-modeling-stride.md)).
+Seluruh 6 kategori STRIDE (*Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege*) telah dianalisis secara spesifik terhadap fitur Blog DevOps Ceria (lihat dokumen lengkap: [`docs/devsecops/threat-modeling-stride.md`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/devsecops/threat-modeling-stride.md)).
+
+Seluruh mitigasi ancaman tersebut juga diuji secara otomatis dalam pipeline CI melalui test suite [`tests/Feature/Security/StrideThreatModelingTest.php`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/tests/Feature/Security/StrideThreatModelingTest.php) pada workflow `devsecops-stride-tests.yml`:
+- `STRIDE-S` (Spoofing): Proteksi session fixation dan pencegahan akses tamu tanpa login.
+- `STRIDE-T` (Tampering): Validasi ketat form artikel dan sanitasi input dari modifikasi ilegal.
+- `STRIDE-R` (Repudiation): Penjaminan rekam jejak audit author dan timestamp mutlak pada artikel.
+- `STRIDE-I` (Information Disclosure): Isolasi artikel berstatus draft dan penyembunyian kredensial sensitif.
+- `STRIDE-D` (Denial of Service): Pembatasan kuota pagination artikel publik untuk mencegah memory exhaustion.
+- `STRIDE-E` (Elevation of Privilege): Penolakan akses tamu dari seluruh endpoint administratif.
 
 ### 6.2 Hasil Dependency Check
 - **PHP**: `composer audit --locked` berhasil memindai seluruh 100+ paket dependensi.

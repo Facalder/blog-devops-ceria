@@ -43,12 +43,12 @@ docs/
 ### 2. 📋 Master Blueprints 6 Anggota (`docs/blueprints/`)
 - [**Master Blueprints Index**](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/README.md):  
   Matriks pembagian peran di mana setiap anggota memegang tanggung jawab atas 1 workflow DevSecOps khusus, minimal 3 perubahan aplikasi/pipeline, dan minimal 3 test cases.
-  - [Blueprint 1: Lead DevOps & Pipeline Architect](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/01-lead-devops-pipeline.md)
-  - [Blueprint 2: Backend PHP Composer Audit Engineer](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/02-devsecops-security-engineer.md)
-  - [Blueprint 3: Frontend Node NPM Audit Engineer](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/03-security-engineer-stride-str.md)
-  - [Blueprint 4: Secret Leak Detection Engineer](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/04-security-engineer-stride-ide.md)
-  - [Blueprint 5: SAST & Vulnerability Engineer](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/05-feature-developer-comments.md)
-  - [Blueprint 6: STRIDE Security Compliance Engineer](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/06-feature-developer-search-filter.md)
+  - [Blueprint 1: Lead DevOps & Branch Protection Architect](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/01-lead-devops-branch-protection.md)
+  - [Blueprint 2: Backend PHP Composer Audit Engineer](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/02-backend-dependency-audit.md)
+  - [Blueprint 3: Frontend Node NPM Audit Engineer](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/03-frontend-dependency-audit.md)
+  - [Blueprint 4: Secret Leak Detection Engineer](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/04-secret-management-security.md)
+  - [Blueprint 5: Code Quality & SonarQube Engineer](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/05-sonarqube-code-quality.md)
+  - [Blueprint 6: STRIDE Threat Modeling Security Engineer](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/blueprints/06-stride-threat-modeling.md)
 
 ### 3. ⚙️ Arsitektur CI/CD & Testing (`docs/ci-cd/`)
 - [**Arsitektur CI Pipeline Modular**](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/ci-cd/ci-pipeline.md):  
@@ -58,7 +58,7 @@ docs/
 
 ### 4. 🛡️ DevSecOps & Keamanan Aplikasi (`docs/devsecops/`)
 - [**Panduan DevSecOps & Secret Management**](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/devsecops/devsecops-and-secret-management.md):  
-  Dokumentasi 6 workflow DevSecOps (`devsecops-01` s.d. `devsecops-06`), scanner dependensi (`composer audit` & `npm audit`), pemindai celah CVE dan kebocoran credential (`Trivy`), serta aturan Branch Protection GitHub Rulesets.
+  Dokumentasi workflow DevSecOps terpadu, scanner dependensi (`composer audit` & `npm audit`), deteksi kebocoran credential (`Trivy`), pengujian ancaman STRIDE, serta aturan Branch Protection GitHub Rulesets.
 - [**Threat Modeling STRIDE**](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/devsecops/threat-modeling-stride.md):  
   Analisis ancaman keamanan komprehensif pada 6 pilar (*Spoofing*, *Tampering*, *Repudiation*, *Information Disclosure*, *Denial of Service*, *Elevation of Privilege*) yang dipetakan ke komponen web Laravel.
 

@@ -1,4 +1,4 @@
-name: DevSecOps 6 - STRIDE Security Compliance
+name: DevSecOps - STRIDE Threat Mitigation Tests
 
 on:
   push:
@@ -49,5 +49,5 @@ jobs:
           touch database/database.sqlite
           php artisan migrate --force
 
-      - name: Run STRIDE Security Test Suite
-        run: vendor/bin/pest tests/Feature/Settings/SecurityTest.php tests/Feature/Auth/
+      - name: Run STRIDE Threat Modeling Security Test Suite
+        run: vendor/bin/pest tests/Feature/Security/StrideThreatModelingTest.php
