@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\MarkdownRenderer;
 use Carbon\CarbonImmutable;
 use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -10,7 +11,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 
 /**
  * @property int $id
@@ -81,7 +81,7 @@ class Post extends Model
 
     public function getHtmlContentAttribute(): string
     {
-        return Str::markdown($this->content);
+        return app(MarkdownRenderer::class)->render($this->content);
     }
 
     public function getReadingTimeAttribute(): int
