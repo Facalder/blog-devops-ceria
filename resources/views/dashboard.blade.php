@@ -1,10 +1,36 @@
 @php
-    $totalPosts = \App\Models\Post::count();
-    $publishedPosts = \App\Models\Post::published()->count();
-    $draftPosts = \App\Models\Post::draft()->count();
+    $currentYear = now()->year;
+
+    $monthlyStatistics = \App\Support\MonthlyPublicationStatistics::countByMonth(
+        \App\Models\Post::query()
+            ->where('status', 'published')
+            ->whereNotNull('published_at')
+            ->get(['status', 'published_at'])
+            ->map(fn ($post) => [
+                'status' => $post->status,
+                'published_at' => $post->published_at,
+            ])
+            ->all(),
+        $currentYear
+    );
+    $postStatuses = \App\Support\PostStatusStatistics::countByStatus(
+        \App\Models\Post::query()->get(['status'])
+            ->map(fn ($post) => ['status' => $post->status])
+            ->all()
+    );
+    $totalPosts = $postStatuses['total'];
+    $publishedPosts = $postStatuses['published'];
+    $draftPosts = $postStatuses['draft'];
     $totalCategories = \App\Models\Category::count();
     $totalUsers = \App\Models\User::count();
     $recentPosts = \App\Models\Post::with(['user', 'category'])->latest()->take(5)->get();
+    $publicationRate = \App\Support\PublicationStatistics::percentage(
+        $publishedPosts,
+        $totalPosts
+    );
+    $publicationStatus = \App\Support\PublicationStatistics::status(
+        $publicationRate
+    );
 @endphp
 
 <x-layouts::app :title="__('Dashboard Overview')">
@@ -52,6 +78,84 @@
             </x-card>
         </div>
 
+        <div class="space-y-4">
+            <div>
+                <h2 class="font-serif text-xl font-light text-on-surface">
+                    Monitoring Publikasi
+                </h2>
+                
+            <div class="space-y-4">
+                <h2 class="font-serif text-xl font-light text-on-surface">
+                    Statistik Publikasi Bulanan {{ $currentYear }}
+                </h2>
+
+                <x-card>
+                    <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px;">
+                        @foreach ($monthlyStatistics as $month => $count)
+                            <div class="rounded border border-gray-200 p-4 text-center">
+                                <p class="text-xs text-tertiary">
+                                    {{ \Carbon\Carbon::create($currentYear, $month, 1)->locale('id')->translatedFormat('M') }}
+                                </p>
+
+                                <p class="mt-2 text-2xl font-semibold text-primary">
+                                    {{ $count }}
+                                </p>
+
+                                <p class="text-xs text-tertiary">
+                                    Artikel
+                                </p>
+                            </div>
+                        @endforeach
+                    </div>
+                </x-card>
+            </div>
+
+                <p class="text-xs text-tertiary">
+                    Statistik publikasi artikel pada CMS
+                </p>
+            </div>
+
+            <x-card class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-tertiary">
+                        Tingkat Publikasi Artikel
+                    </span>
+
+                    <span class="text-2xl font-semibold text-primary">
+                        {{ $publicationRate }}%
+                    </span>
+                </div>
+
+                
+                <div class="w-full rounded-full overflow-hidden"
+                    style="height: 12px; background-color: #E5E7EB;">
+
+                    <div class="rounded-full"
+                        style="width: {{ $publicationRate }}%;
+                                height: 100%;
+                                background-color: #16A34A;
+                                transition: width 0.5s ease;">
+                    </div>
+
+                </div>
+
+                <div class="flex justify-between text-xs text-tertiary">
+                    <span>
+                        {{ $publishedPosts }} artikel diterbitkan
+                    </span>
+
+                    <span>
+                        {{ $totalPosts - $publishedPosts }} artikel belum diterbitkan
+                    </span>
+                </div>
+            </x-card>
+            <p class="text-sm text-tertiary">
+                Status Publikasi:
+                <span class="font-semibold text-primary">
+                    {{ $publicationStatus }}
+                </span>
+            </p>
+        </div>
         <div class="space-y-4">
             <div class="flex items-center justify-between">
                 <div>

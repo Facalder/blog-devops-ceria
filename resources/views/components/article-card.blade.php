@@ -10,7 +10,13 @@
             @else
                 <span class="text-xs text-tertiary font-mono">Artikel</span>
             @endif
-            <span class="font-mono text-xs text-tertiary font-medium">{{ $post->reading_time }} mnt baca</span>
+            <div class="flex items-center gap-2">
+                @if (($post->comments_count ?? 0) > 0)
+                    <span class="font-mono text-xs text-tertiary font-medium">{{ $post->comments_count }} kmt</span>
+                    <span>&bull;</span>
+                @endif
+                <span class="font-mono text-xs text-tertiary font-medium">{{ $post->reading_time }} mnt baca</span>
+            </div>
         </div>
 
         <h2 class="font-serif text-xl font-normal text-on-surface group-hover:text-primary transition-colors line-clamp-2 leading-snug">

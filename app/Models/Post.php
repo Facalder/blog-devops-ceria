@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use App\Services\MarkdownRenderer;
 use Carbon\CarbonImmutable;
 use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 
 /**
  * @property int $id
@@ -27,8 +29,12 @@ use Illuminate\Support\Str;
  * @property Carbon|null $updated_at
  * @property-read User $user
  * @property-read Category|null $category
+ * @property-read Collection<int, Comment> $comments
+ * @property-read int|null $comments_count
  * @property-read string $html_content
  * @property-read int $reading_time
+ *
+ * @mixin Builder<Post>
  */
 #[Fillable(['user_id', 'category_id', 'title', 'slug', 'content', 'excerpt', 'status', 'published_at', 'scheduled_at'])]
 class Post extends Model
@@ -61,6 +67,14 @@ class Post extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * @return HasMany<Comment, $this>
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
     }
 
     /**
@@ -111,7 +125,7 @@ class Post extends Model
 
     public function getHtmlContentAttribute(): string
     {
-        return Str::markdown($this->content);
+        return app(MarkdownRenderer::class)->render($this->content);
     }
 
     public function getReadingTimeAttribute(): int
@@ -119,5 +133,13 @@ class Post extends Model
         $words = str_word_count(strip_tags($this->content));
 
         return max(1, (int) ceil($words / 200));
+    }
+
+    /**
+     * @return HasMany<PostRevision, $this>
+     */
+    public function revisions(): HasMany
+    {
+        return $this->hasMany(PostRevision::class)->orderByDesc('revision_number');
     }
 }
