@@ -22,8 +22,12 @@
                         {{ __('Blog Posts') }}
                     </flux:sidebar.item>
 
-                    <flux:sidebar.item icon="tag" :href="route('categories.index')" :current="request()->routeIs('categories.*')" wire:navigate>
+                                        <flux:sidebar.item icon="tag" :href="route('categories.index')" :current="request()->routeIs('categories.*')" wire:navigate>
                         {{ __('Categories') }}
+                    </flux:sidebar.item>
+
+                    <flux:sidebar.item icon="bookmark" :href="route('bookmarks.index')" :current="request()->routeIs('bookmarks.*')" wire:navigate>
+                        {{ __('Bookmarks') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
 

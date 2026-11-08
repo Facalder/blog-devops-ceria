@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
@@ -29,6 +30,8 @@ class Create extends Component
 
     public string $status = 'draft';
 
+    public ?string $scheduled_at = null;
+
     /**
      * @return array<string, array<int, string>>
      */
@@ -40,7 +43,22 @@ class Create extends Component
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'content' => ['required', 'string'],
             'excerpt' => ['nullable', 'string', 'max:500'],
-            'status' => ['required', 'in:draft,published'],
+            'status' => ['required', 'in:draft,published,scheduled'],
+            'scheduled_at' => $this->status === 'scheduled'
+                ? ['required', 'date', 'after:now']
+                : ['nullable'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function messages(): array
+    {
+        return [
+            'scheduled_at.required' => 'Tanggal dan waktu publikasi wajib diisi untuk artikel terjadwal.',
+            'scheduled_at.date' => 'Format tanggal dan waktu publikasi tidak valid.',
+            'scheduled_at.after' => 'Jadwal publikasi harus berada di masa depan.',
         ];
     }
 
@@ -62,6 +80,7 @@ class Create extends Component
         }
 
         $validated = $this->validate();
+        $status = $validated['status'];
 
         $post = new Post;
         $post->user_id = (int) Auth::id();
@@ -70,11 +89,14 @@ class Create extends Component
         $post->category_id = $validated['category_id'] ? (int) $validated['category_id'] : null;
         $post->content = $validated['content'];
         $post->excerpt = $validated['excerpt'] ?: Str::limit(strip_tags($validated['content']), 160);
-        $post->status = $validated['status'];
-        $post->published_at = $validated['status'] === 'published' ? now() : null;
+        $post->status = $status;
+        $post->published_at = $status === 'published' ? now() : null;
+        $post->scheduled_at = $status === 'scheduled' ? Carbon::parse($validated['scheduled_at']) : null;
         $post->save();
 
-        session()->flash('status', 'Artikel berhasil dibuat.');
+        session()->flash('status', $status === 'scheduled'
+            ? 'Artikel berhasil dijadwalkan.'
+            : 'Artikel berhasil dibuat.');
 
         $this->redirect(route('posts.index'), navigate: true);
     }
