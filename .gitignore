@@ -36,14 +36,13 @@ yarn-error.log
 /boost.json
 /opencode.json
 /opencode.jsonc
-
-# Specific ignored files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
 /DevOps - UTS 25262.md
-
-# Ignore all markdown files
 *.md
-
-# Except markdown files required for AI context and project documentation
 !AGENTS.md
 !CLAUDE.md
 !DESIGN.md
