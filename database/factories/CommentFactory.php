@@ -19,6 +19,8 @@ class CommentFactory extends Factory
     {
         return [
             'post_id' => Post::factory(),
+            'parent_id' => null,
+            'reply_to_id' => null,
             'user_id' => null,
             'author_name' => fake()->name(),
             'author_email' => fake()->safeEmail(),
@@ -32,6 +34,17 @@ class CommentFactory extends Factory
             'user_id' => $user->id,
             'author_name' => $user->name,
             'author_email' => $user->email,
+        ]);
+    }
+
+    public function reply(Comment $target): static
+    {
+        $rootId = $target->parent_id ?? $target->id;
+
+        return $this->state(fn () => [
+            'post_id' => $target->post_id,
+            'parent_id' => $rootId,
+            'reply_to_id' => $target->id,
         ]);
     }
 }

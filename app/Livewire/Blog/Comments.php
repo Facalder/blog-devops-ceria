@@ -12,6 +12,8 @@ use Livewire\Component;
 
 /**
  * @property Collection<int, Comment> $comments
+ * @property int $totalCommentsCount
+ * @property-read Comment|null $replyingToComment
  */
 class Comments extends Component
 {
@@ -22,6 +24,10 @@ class Comments extends Component
     public string $authorEmail = '';
 
     public string $content = '';
+
+    public ?int $replyingToCommentId = null;
+
+    public string $replyContent = '';
 
     public ?int $editingCommentId = null;
 
@@ -72,9 +78,82 @@ class Comments extends Component
             'content' => trim($this->content),
         ]);
 
+        $this->dispatch('profile-saved', name: $authorName, email: $authorEmail);
+
         $this->content = '';
         $this->feedbackMessage = 'Komentar Anda berhasil dikirim.';
-        unset($this->comments);
+        unset($this->comments, $this->totalCommentsCount);
+    }
+
+    public function startReply(int $commentId): void
+    {
+        $comment = Comment::query()
+            ->where('post_id', $this->post->id)
+            ->findOrFail($commentId);
+
+        $this->replyingToCommentId = $comment->id;
+        $this->replyContent = '';
+        $this->resetValidation(['replyContent', 'authorName', 'authorEmail']);
+        unset($this->replyingToComment);
+    }
+
+    public function cancelReply(): void
+    {
+        $this->replyingToCommentId = null;
+        $this->replyContent = '';
+        $this->resetValidation(['replyContent']);
+        unset($this->replyingToComment);
+    }
+
+    public function saveReply(): void
+    {
+        abort_if($this->replyingToCommentId === null, 400);
+
+        $targetComment = Comment::query()
+            ->where('post_id', $this->post->id)
+            ->findOrFail($this->replyingToCommentId);
+
+        $parentId = $targetComment->id;
+        $replyToId = $targetComment->id;
+
+        $user = $this->currentUser();
+
+        if ($user !== null) {
+            $this->validate([
+                'replyContent' => ['required', 'string', 'min:3', 'max:2000'],
+            ]);
+
+            $authorName = $user->name;
+            $authorEmail = $user->email;
+            $userId = $user->id;
+        } else {
+            $this->validate([
+                'authorName' => ['required', 'string', 'min:2', 'max:100'],
+                'authorEmail' => ['required', 'email', 'max:255'],
+                'replyContent' => ['required', 'string', 'min:3', 'max:2000'],
+            ]);
+
+            $authorName = trim($this->authorName);
+            $authorEmail = trim($this->authorEmail);
+            $userId = null;
+        }
+
+        Comment::query()->create([
+            'post_id' => $this->post->id,
+            'parent_id' => $parentId,
+            'reply_to_id' => $replyToId,
+            'user_id' => $userId,
+            'author_name' => $authorName,
+            'author_email' => $authorEmail,
+            'content' => trim($this->replyContent),
+        ]);
+
+        $this->dispatch('profile-saved', name: $authorName, email: $authorEmail);
+
+        $this->replyingToCommentId = null;
+        $this->replyContent = '';
+        $this->feedbackMessage = 'Balasan Anda berhasil dikirim.';
+        unset($this->comments, $this->totalCommentsCount, $this->replyingToComment);
     }
 
     public function edit(int $commentId): void
@@ -114,7 +193,7 @@ class Comments extends Component
         $this->editingCommentId = null;
         $this->editingContent = '';
         $this->feedbackMessage = 'Komentar berhasil diperbarui.';
-        unset($this->comments);
+        unset($this->comments, $this->totalCommentsCount);
     }
 
     public function delete(int $commentId): void
@@ -127,9 +206,13 @@ class Comments extends Component
             $this->cancelEdit();
         }
 
+        if ($this->replyingToCommentId === $commentId) {
+            $this->cancelReply();
+        }
+
         $comment->delete();
         $this->feedbackMessage = 'Komentar berhasil dihapus.';
-        unset($this->comments);
+        unset($this->comments, $this->totalCommentsCount);
     }
 
     public function dismissFeedback(): void
@@ -143,16 +226,58 @@ class Comments extends Component
     #[Computed]
     public function comments(): Collection
     {
+        $allComments = Comment::query()
+            ->where('post_id', $this->post->id)
+            ->with(['user', 'replyTo'])
+            ->oldest()
+            ->get();
+
+        return $this->buildTree($allComments);
+    }
+
+    #[Computed]
+    public function replyingToComment(): ?Comment
+    {
+        if ($this->replyingToCommentId === null) {
+            return null;
+        }
+
         return Comment::query()
             ->where('post_id', $this->post->id)
             ->with('user')
-            ->latest()
-            ->get();
+            ->find($this->replyingToCommentId);
+    }
+
+    #[Computed]
+    public function totalCommentsCount(): int
+    {
+        return Comment::query()
+            ->where('post_id', $this->post->id)
+            ->count();
     }
 
     public function render(): View
     {
         return view('livewire.blog.comments');
+    }
+
+    /**
+     * @param  Collection<int, Comment>  $comments
+     * @return Collection<int, Comment>
+     */
+    private function buildTree(Collection $comments, ?int $parentId = null, int $depth = 0): Collection
+    {
+        $branch = new Collection;
+
+        foreach ($comments as $comment) {
+            if ($comment->parent_id === $parentId) {
+                $comment->depth = $depth;
+                $comment->setRelation('replies', $this->buildTree($comments, $comment->id, $depth + 1));
+                $branch->push($comment);
+            }
+        }
+
+        return $depth === 0 ? $branch->reverse() : $branch;
     }
 
     private function currentUser(): ?User

@@ -1,10 +1,52 @@
-<section class="mt-16 pt-12 border-t border-border-subtle" id="comments">
+<section
+    x-data="{
+        storedName: '',
+        storedEmail: '',
+        hasStoredProfile: false,
+        showEditProfile: false,
+        init() {
+            try {
+                const profile = JSON.parse(localStorage.getItem('devops_ceria_reader') || '{}');
+                if (profile && profile.name && profile.email) {
+                    this.storedName = profile.name;
+                    this.storedEmail = profile.email;
+                    this.hasStoredProfile = true;
+                    if (! $wire.authorName) {
+                        $wire.set('authorName', profile.name);
+                    }
+                    if (! $wire.authorEmail) {
+                        $wire.set('authorEmail', profile.email);
+                    }
+                }
+            } catch (e) {}
+
+            window.addEventListener('profile-saved', (event) => {
+                const detail = event.detail;
+                if (detail && detail.name && detail.email) {
+                    this.storedName = detail.name;
+                    this.storedEmail = detail.email;
+                    this.hasStoredProfile = true;
+                    this.showEditProfile = false;
+                    localStorage.setItem('devops_ceria_reader', JSON.stringify({
+                        name: detail.name,
+                        email: detail.email
+                    }));
+                }
+            });
+        },
+        changeProfile() {
+            this.showEditProfile = true;
+        }
+    }"
+    class="mt-16 pt-12 border-t border-border-subtle w-full min-w-0"
+    id="comments"
+>
     <div class="flex items-center justify-between mb-8">
         <div>
-            <h2 class="font-serif text-2xl font-light text-on-surface flex items-center gap-2">
+            <h2 class="font-serif text-2xl font-light text-on-surface flex items-center gap-2 flex-wrap">
                 <span>Diskusi & Komentar</span>
-                <span class="font-mono text-xs text-primary bg-primary-tint border border-primary/20 px-2 py-0.5 rounded-[2px] font-semibold">
-                    {{ $this->comments->count() }}
+                <span class="font-mono text-xs text-primary bg-primary-tint border border-primary/20 px-2 py-0.5 rounded-xs font-semibold">
+                    {{ $this->totalCommentsCount }}
                 </span>
             </h2>
             <p class="font-mono text-xs text-tertiary mt-1">
@@ -22,15 +64,44 @@
         </div>
     @endif
 
-    <form wire:submit="save" class="bg-surface border border-border-subtle rounded-[3px] p-5 sm:p-6 mb-10 space-y-4">
+    <form wire:submit="save" class="bg-surface border border-border-subtle rounded-[3px] p-4 sm:p-6 mb-10 space-y-4 shadow-2xs w-full min-w-0 overflow-hidden">
         @auth
-            <div class="font-mono text-xs text-tertiary flex items-center gap-2 pb-2 border-b border-border-subtle">
-                <span>Berkomentar sebagai:</span>
-                <strong class="text-on-surface font-semibold">{{ auth()->user()->name }}</strong>
-                <span class="text-[11px] text-tertiary">({{ auth()->user()->email }})</span>
+            <div class="p-3 bg-white border border-border-subtle rounded-[2px] flex items-center justify-between gap-2 text-xs font-mono min-w-0">
+                <div class="flex items-center gap-2 min-w-0">
+                    <div class="size-6 rounded-full bg-primary-tint border border-primary/20 flex items-center justify-center font-bold text-primary text-[10px] shrink-0">
+                        {{ auth()->user()->initials() }}
+                    </div>
+                    <div class="min-w-0 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+                        <span class="text-tertiary text-[11px] shrink-0">Berkomentar sebagai:</span>
+                        <strong class="text-on-surface font-semibold truncate">{{ auth()->user()->name }}</strong>
+                        <span class="text-tertiary text-[11px] truncate">({{ auth()->user()->email }})</span>
+                    </div>
+                </div>
             </div>
         @else
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div x-show="hasStoredProfile && !showEditProfile" x-cloak class="p-3 bg-white border border-border-subtle rounded-[2px] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs font-mono min-w-0">
+                <div class="flex items-center gap-2 min-w-0">
+                    <div class="size-6 rounded-full bg-primary-tint border border-primary/20 flex items-center justify-center font-bold text-primary text-[10px] shrink-0">
+                        <span x-text="storedName ? storedName.charAt(0).toUpperCase() : '?'"></span>
+                    </div>
+                    <div class="min-w-0 flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+                        <span class="text-tertiary text-[11px] shrink-0">Berkomentar sebagai:</span>
+                        <strong class="text-on-surface font-semibold truncate max-w-[140px] sm:max-w-[220px]" x-text="storedName"></strong>
+                        <span class="text-tertiary text-[11px] truncate max-w-[180px] sm:max-w-none">
+                            (<span x-text="storedEmail" class="break-all"></span>)
+                        </span>
+                    </div>
+                </div>
+                <button
+                    type="button"
+                    @click="changeProfile"
+                    class="self-start sm:self-auto text-primary hover:underline text-[11px] font-mono cursor-pointer shrink-0"
+                >
+                    Ganti Profil
+                </button>
+            </div>
+
+            <div x-show="!hasStoredProfile || showEditProfile" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="space-y-1">
                     <label for="authorName" class="block font-mono text-xs text-tertiary font-medium">
                         Nama Lengkap <span class="text-[#E45757]">*</span>
@@ -81,104 +152,24 @@
             @enderror
         </div>
 
-        <div class="flex items-center justify-between pt-2">
-            <span class="font-mono text-[11px] text-tertiary">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+            <span class="font-mono text-[11px] text-tertiary leading-relaxed">
                 Mendukung teks santun & diskusi profesional.
             </span>
-            <x-button type="submit" variant="primary" size="md" wire:loading.attr="disabled">
+            <x-button type="submit" variant="primary" size="md" class="w-full sm:w-auto shrink-0" wire:loading.attr="disabled">
                 <span wire:loading.remove wire:target="save">Kirim Komentar</span>
                 <span wire:loading wire:target="save">Mengirim...</span>
             </x-button>
         </div>
     </form>
 
-    <div class="space-y-4">
+    <div class="space-y-6">
         @forelse ($this->comments as $comment)
-            <div class="bg-white border border-border-subtle rounded-[3px] p-5 transition-colors hover:border-primary/40 flex flex-col justify-between" id="comment-{{ $comment->id }}">
-                <div class="flex items-start justify-between gap-4">
-                    <div class="flex items-center gap-3">
-                        <div class="size-8 rounded-full bg-primary-tint border border-primary/20 flex items-center justify-center font-mono text-xs text-primary font-bold">
-                            {{ $comment->initials() }}
-                        </div>
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <span class="font-medium text-sm text-on-surface">{{ $comment->author_name }}</span>
-                                @if ($comment->user_id && $comment->user_id === $post->user_id)
-                                    <x-badge variant="primary">Penulis Artikel</x-badge>
-                                @elseif ($comment->user?->isAdmin())
-                                    <x-badge variant="neutral">Admin</x-badge>
-                                @endif
-                            </div>
-                            <div class="flex items-center gap-1.5 font-mono text-xs text-tertiary">
-                                <time datetime="{{ $comment->created_at?->toIso8601String() }}">
-                                    {{ $comment->created_at?->diffForHumans() }}
-                                </time>
-                                @if ($comment->updated_at && $comment->updated_at->gt($comment->created_at))
-                                    <span>&bull;</span>
-                                    <span class="italic text-[11px]">(diedit)</span>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                @if ($editingCommentId === $comment->id)
-                    <form wire:submit="update" class="mt-4 space-y-3">
-                        <div class="space-y-1">
-                            <x-textarea
-                                id="editComment-{{ $comment->id }}"
-                                wire:model="editingContent"
-                                rows="3"
-                                placeholder="Perbarui komentar Anda..."
-                                :error="$errors->first('editingContent')"
-                            />
-                            @error('editingContent')
-                                <p class="font-mono text-xs text-[#E45757]">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div class="flex items-center justify-end gap-2 pt-1">
-                            <x-button type="button" wire:click="cancelEdit" variant="secondary" size="sm">
-                                Batal
-                            </x-button>
-                            <x-button type="submit" variant="primary" size="sm" wire:loading.attr="disabled">
-                                <span wire:loading.remove wire:target="update">Simpan Perubahan</span>
-                                <span wire:loading wire:target="update">Menyimpan...</span>
-                            </x-button>
-                        </div>
-                    </form>
-                @else
-                    <div class="mt-4 text-sm text-on-surface leading-relaxed whitespace-pre-line font-sans pl-11">
-                        {{ $comment->content }}
-                    </div>
-
-                    <div class="mt-3 flex items-center justify-end gap-2 font-mono text-xs">
-                        <button
-                            type="button"
-                            wire:click="edit({{ $comment->id }})"
-                            class="inline-flex items-center gap-1.5 text-tertiary hover:text-primary transition-colors cursor-pointer px-2.5 py-1 rounded-[2px] border border-border-subtle hover:border-primary/40 bg-surface"
-                            title="Edit komentar ini"
-                        >
-                            <svg class="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                            </svg>
-                            <span>Edit</span>
-                        </button>
-
-                        <button
-                            type="button"
-                            wire:click="delete({{ $comment->id }})"
-                            wire:confirm="Apakah Anda yakin ingin menghapus komentar ini?"
-                            class="inline-flex items-center gap-1.5 text-tertiary hover:text-[#E45757] transition-colors cursor-pointer px-2.5 py-1 rounded-[2px] border border-border-subtle hover:border-[#E45757]/40 bg-surface"
-                            title="Hapus komentar ini"
-                        >
-                            <svg class="size-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                            </svg>
-                            <span>Hapus</span>
-                        </button>
-                    </div>
-                @endif
-            </div>
+            @include('livewire.blog.partials.comment-node', [
+                'comment' => $comment,
+                'depth' => 0,
+                'post' => $post,
+            ])
         @empty
             <div class="py-12 text-center bg-surface border border-border-subtle rounded-[3px] p-6">
                 <p class="font-serif text-lg font-light text-on-surface">Belum ada diskusi pada artikel ini.</p>

@@ -13,7 +13,7 @@
         @fonts
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="min-h-screen bg-white text-on-surface antialiased flex flex-col font-sans">
+    <body class="min-h-screen bg-white text-on-surface antialiased flex flex-col font-sans overflow-x-hidden">
         <header class="border-b border-border-subtle bg-white/90 backdrop-blur-xs sticky top-0 z-30">
             <div class="max-w-4xl mx-auto px-5 h-16 flex items-center justify-between">
                 <a href="{{ route('home') }}" class="flex items-center gap-2 group">
@@ -36,7 +36,7 @@
             </div>
         </header>
 
-        <main class="flex-1 max-w-3xl w-full mx-auto px-5 py-12 md:py-16">
+        <main class="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-5 py-12 md:py-16 min-w-0">
             <article class="space-y-8">
                 <div class="space-y-4 border-b border-border-subtle pb-8">
                     <div class="flex items-center gap-2 font-mono text-xs text-tertiary">

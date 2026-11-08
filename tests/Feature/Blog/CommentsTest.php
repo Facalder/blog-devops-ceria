@@ -333,3 +333,162 @@ test('guest can edit and delete their comment posted in the current session', fu
 
     $this->assertDatabaseMissing('comments', ['id' => $comment->id]);
 });
+
+test('visitor can reply to an existing comment', function () {
+    $post = Post::factory()->create([
+        'status' => 'published',
+        'published_at' => now(),
+    ]);
+
+    $parentComment = Comment::factory()->create([
+        'post_id' => $post->id,
+        'author_name' => 'Doni DevOps',
+        'content' => 'Pertanyaan awal mengenai arsitektur.',
+    ]);
+
+    Livewire::test(Comments::class, ['post' => $post])
+        ->call('startReply', $parentComment->id)
+        ->assertSet('replyingToCommentId', $parentComment->id)
+        ->set('authorName', 'Maya SRE')
+        ->set('authorEmail', 'maya@sre.test')
+        ->set('replyContent', 'Ini jawaban balasan untuk Doni.')
+        ->call('saveReply')
+        ->assertHasNoErrors()
+        ->assertDispatched('profile-saved')
+        ->assertSet('replyingToCommentId', null)
+        ->assertSee('Balasan Anda berhasil dikirim.')
+        ->assertSee('Maya SRE')
+        ->assertSee('Ini jawaban balasan untuk Doni.');
+
+    $this->assertDatabaseHas('comments', [
+        'post_id' => $post->id,
+        'parent_id' => $parentComment->id,
+        'reply_to_id' => $parentComment->id,
+        'author_name' => 'Maya SRE',
+        'content' => 'Ini jawaban balasan untuk Doni.',
+    ]);
+});
+
+test('replying to a reply nests under the target comment with level attribution', function () {
+    $post = Post::factory()->create([
+        'status' => 'published',
+        'published_at' => now(),
+    ]);
+
+    $rootComment = Comment::factory()->create([
+        'post_id' => $post->id,
+        'author_name' => 'Root Author',
+        'content' => 'Root parent comment.',
+    ]);
+
+    $childReply = Comment::factory()->reply($rootComment)->create([
+        'post_id' => $post->id,
+        'author_name' => 'First Author',
+        'content' => 'First level reply.',
+    ]);
+
+    Livewire::test(Comments::class, ['post' => $post])
+        ->call('startReply', $childReply->id)
+        ->set('authorName', 'Dedi Cloud')
+        ->set('authorEmail', 'dedi@cloud.test')
+        ->set('replyContent', 'Balasan kedua membentuk level selanjutnya.')
+        ->call('saveReply')
+        ->assertHasNoErrors()
+        ->assertSee('First Author')
+        ->assertSee('membalas')
+        ->assertSee('Level 2')
+        ->assertSee('Balasan kedua membentuk level selanjutnya.');
+
+    $this->assertDatabaseHas('comments', [
+        'post_id' => $post->id,
+        'parent_id' => $childReply->id,
+        'reply_to_id' => $childReply->id,
+        'content' => 'Balasan kedua membentuk level selanjutnya.',
+    ]);
+});
+
+test('deleting a root comment cascades to all replies', function () {
+    $post = Post::factory()->create([
+        'status' => 'published',
+        'published_at' => now(),
+    ]);
+
+    $rootComment = Comment::factory()->create([
+        'post_id' => $post->id,
+    ]);
+
+    $childReply = Comment::factory()->reply($rootComment)->create([
+        'post_id' => $post->id,
+    ]);
+
+    Livewire::test(Comments::class, ['post' => $post])
+        ->call('delete', $rootComment->id);
+
+    $this->assertDatabaseMissing('comments', ['id' => $rootComment->id]);
+    $this->assertDatabaseMissing('comments', ['id' => $childReply->id]);
+});
+
+test('user can cancel replying to a comment', function () {
+    $post = Post::factory()->create([
+        'status' => 'published',
+        'published_at' => now(),
+    ]);
+
+    $comment = Comment::factory()->create([
+        'post_id' => $post->id,
+    ]);
+
+    Livewire::test(Comments::class, ['post' => $post])
+        ->call('startReply', $comment->id)
+        ->assertSet('replyingToCommentId', $comment->id)
+        ->call('cancelReply')
+        ->assertSet('replyingToCommentId', null);
+});
+
+test('multi-level nested comments render with proper depth badges and attribution links', function () {
+    $post = Post::factory()->create([
+        'status' => 'published',
+        'published_at' => now(),
+    ]);
+
+    $level0 = Comment::factory()->create([
+        'post_id' => $post->id,
+        'author_name' => 'Alice Root',
+        'content' => 'Root discussion starter.',
+    ]);
+
+    $level1 = Comment::factory()->create([
+        'post_id' => $post->id,
+        'parent_id' => $level0->id,
+        'reply_to_id' => $level0->id,
+        'author_name' => 'Bob First',
+        'content' => 'First level response.',
+    ]);
+
+    $level2 = Comment::factory()->create([
+        'post_id' => $post->id,
+        'parent_id' => $level1->id,
+        'reply_to_id' => $level1->id,
+        'author_name' => 'Charlie Second',
+        'content' => 'Second level response.',
+    ]);
+
+    $level3 = Comment::factory()->create([
+        'post_id' => $post->id,
+        'parent_id' => $level2->id,
+        'reply_to_id' => $level2->id,
+        'author_name' => 'Diana Third',
+        'content' => 'Third level response.',
+    ]);
+
+    Livewire::test(Comments::class, ['post' => $post])
+        ->assertSee('Alice Root')
+        ->assertSee('Bob First')
+        ->assertSee('Charlie Second')
+        ->assertSee('Diana Third')
+        ->assertSee('Level 2')
+        ->assertSee('Level 3')
+        ->assertSee('#comment-'.$level0->id)
+        ->assertSee('#comment-'.$level1->id)
+        ->assertSee('#comment-'.$level2->id);
+});
