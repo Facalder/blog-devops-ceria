@@ -5,6 +5,7 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -27,6 +28,8 @@ use Illuminate\Support\Str;
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
+ * @mixin Builder<User>
  */
 #[Fillable(['name', 'email', 'role', 'password'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
@@ -55,6 +58,14 @@ class User extends Authenticatable
     }
 
     /**
+     * @return HasMany<Comment, $this>
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    /**
      * @return BelongsToMany<Post, $this>
      */
     public function bookmarks(): BelongsToMany
@@ -63,10 +74,6 @@ class User extends Authenticatable
             ->withPivot('created_at');
     }
 
-    /**
-     * Tambah bookmark jika belum ada, hapus jika sudah ada.
-     * Mengembalikan true jika artikel sekarang ter-bookmark.
-     */
     public function toggleBookmark(Post $post): bool
     {
         $result = $this->bookmarks()->toggle($post->id);
@@ -80,8 +87,6 @@ class User extends Authenticatable
     }
 
     /**
-     * Artikel published yang di-bookmark user ini, terbaru di atas.
-     *
      * @return Collection<int, Post>
      */
     public function getBookmarkedPosts(): Collection
@@ -96,6 +101,11 @@ class User extends Authenticatable
     public function isWriter(): bool
     {
         return $this->role === 'writer';
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
     }
 
     public function initials(): string

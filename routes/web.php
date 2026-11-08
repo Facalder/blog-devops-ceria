@@ -18,12 +18,15 @@ Route::get('/', function (Request $request) {
     $searchQuery = $request->query('search');
     $search = is_string($searchQuery) && $searchQuery !== '' ? $searchQuery : null;
 
-    $categories = Category::withCount(['posts' => fn ($q) => $q->published()])
+    $categories = Category::query()
+        ->withCount(['posts' => fn ($q) => $q->published()])
         ->get()
         ->filter(fn ($c) => $c->posts_count > 0);
 
-    $posts = Post::published()
+    $posts = Post::query()
+        ->published()
         ->with(['user', 'category'])
+        ->withCount('comments')
         ->when($selectedCategorySlug, function ($query, $slug) {
             $query->whereHas('category', fn ($c) => $c->where('slug', $slug));
         })
@@ -49,6 +52,8 @@ Route::get('/', function (Request $request) {
 
 Route::get('/blog/{post:slug}', function (Post $post) {
     abort_unless($post->isPubliclyVisible(), 404);
+
+    $post->loadCount('comments');
 
     return view('blog.show', ['post' => $post]);
 })->name('blog.show');
