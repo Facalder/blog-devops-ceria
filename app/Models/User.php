@@ -5,7 +5,9 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -50,6 +52,45 @@ class User extends Authenticatable
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
+    }
+
+    /**
+     * @return BelongsToMany<Post, $this>
+     */
+    public function bookmarks(): BelongsToMany
+    {
+        return $this->belongsToMany(Post::class, 'bookmarks')
+            ->withPivot('created_at');
+    }
+
+    /**
+     * Tambah bookmark jika belum ada, hapus jika sudah ada.
+     * Mengembalikan true jika artikel sekarang ter-bookmark.
+     */
+    public function toggleBookmark(Post $post): bool
+    {
+        $result = $this->bookmarks()->toggle($post->id);
+
+        return count($result['attached']) > 0;
+    }
+
+    public function isBookmarked(Post $post): bool
+    {
+        return $this->bookmarks()->where('posts.id', $post->id)->exists();
+    }
+
+    /**
+     * Artikel published yang di-bookmark user ini, terbaru di atas.
+     *
+     * @return Collection<int, Post>
+     */
+    public function getBookmarkedPosts(): Collection
+    {
+        return $this->bookmarks()
+            ->published()
+            ->with(['user', 'category'])
+            ->orderByPivot('created_at', 'desc')
+            ->get();
     }
 
     public function isWriter(): bool
