@@ -51,15 +51,13 @@ class TextDiffEngine
         return $html;
     }
 
-
-
     public function computeChecksum(int $postId, string $title, string $content, int $userId): string
     {
         return hash('sha256', "{$postId}|{$title}|{$content}|{$userId}");
     }
 
     /**
-     * @param list<array{type: 'unchanged'|'added'|'removed', value: string}> $diff
+     * @param  list<array{type: 'unchanged'|'added'|'removed', value: string}>  $diff
      * @return array{added: int, removed: int, unchanged: int}
      */
     public function getStatistics(array $diff): array
@@ -89,15 +87,16 @@ class TextDiffEngine
     /**
      * @return list<string>
      */
-        private function tokenize(string $text): array
+    private function tokenize(string $text): array
     {
         $tokens = preg_split('/(\s+)/u', $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
         return $tokens !== false ? array_values($tokens) : [$text];
     }
+
     /**
-     * @param list<string> $a
-     * @param list<string> $b
+     * @param  list<string>  $a
+     * @param  list<string>  $b
      * @return array<int, array<int, int>>
      */
     private function buildLcsMatrix(array $a, array $b): array
@@ -120,9 +119,9 @@ class TextDiffEngine
     }
 
     /**
-     * @param array<int, array<int, int>> $matrix
-     * @param list<string> $a
-     * @param list<string> $b
+     * @param  array<int, array<int, int>>  $matrix
+     * @param  list<string>  $a
+     * @param  list<string>  $b
      * @return list<array{type: 'unchanged'|'added'|'removed', value: string}>
      */
     private function backtrack(array $matrix, array $a, array $b, int $i, int $j): array
@@ -147,7 +146,7 @@ class TextDiffEngine
     }
 
     /**
-     * @param list<array{type: 'unchanged'|'added'|'removed', value: string}> $raw
+     * @param  list<array{type: 'unchanged'|'added'|'removed', value: string}>  $raw
      * @return list<array{type: 'unchanged'|'added'|'removed', value: string}>
      */
     private function consolidate(array $raw): array

@@ -47,6 +47,7 @@ class Edit extends Component
     public string $diffStats = '';
 
     public bool $confirmingRestore = false;
+
     public ?int $selectedRevisionNumber = null;
 
     public function mount(Post $post): void
@@ -195,7 +196,8 @@ class Edit extends Component
     {
         return view('livewire.admin.posts.edit');
     }
-     public function startRollbackFromSidebar(int $revisionId): void
+
+    public function startRollbackFromSidebar(int $revisionId): void
     {
         $this->viewDiff($revisionId);
         $this->confirmingRestore = true;
