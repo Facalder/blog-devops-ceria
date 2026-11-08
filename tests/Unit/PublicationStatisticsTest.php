@@ -38,6 +38,7 @@ class PublicationStatisticsTest extends TestCase
             PublicationStatistics::percentage(25, 20)
         );
     }
+
     public function test_publication_status(): void
     {
         $this->assertEquals('Rendah', PublicationStatistics::status(25));

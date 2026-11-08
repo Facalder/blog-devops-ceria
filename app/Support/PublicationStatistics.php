@@ -17,6 +17,7 @@ class PublicationStatistics
             2
         );
     }
+
     public static function status(float $percentage): string
     {
         if ($percentage >= 80) {
