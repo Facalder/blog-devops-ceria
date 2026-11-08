@@ -30,11 +30,11 @@ Perencanaan ini dirancang untuk mencapai predikat **Sangat Baik (Skor 4 / Nilai 
 | 5 | **Kontribusi Perubahan Kode** | > 3 perubahan signifikan per anggota tim (fitur / function baru) | Pembagian modul kerja jelas pada Blog, Category, User, dan Security | Commit history Git, PR individual, rincian per anggota |
 | 6 | **Kualitas Kode** | 0 Bugs, 0 Vulnerabilities, Security Hotspots reviewed, Code Smells minimal | Penegakan Laravel Pint dan static analysis Larastan/PHPStan Level 7 | Laporan analisis SonarCloud & build log |
 | 7 | **Kelengkapan Test Cases** | > 3 test cases per fitur yang mencakup skenario positif, negatif, dan *edge cases* | Pembuatan unit & feature test suites menggunakan Pest 5 | Direktori `tests/Feature/` dan `tests/Unit/` |
-| 8 | **Threat Modeling STRIDE** | Semua 6 kategori dianalisis dengan ancaman spesifik aplikasi dan mitigasi nyata | Pemetaan arsitektur Blog DevOps Ceria terhadap risiko STRIDE | Dokumen `docs/threat-modeling-stride.md` |
+| 8 | **Threat Modeling STRIDE** | Semua 6 kategori dianalisis dengan ancaman spesifik aplikasi dan mitigasi nyata | Pemetaan arsitektur Blog DevOps Ceria terhadap risiko STRIDE | Dokumen `docs/devsecops/threat-modeling-stride.md` |
 | 9 | **Dependency Check & Security Scan** | Pemindaian kerentanan dependensi dan audit keamanan repository otomatis | Eksekusi `composer audit`, `npm audit`, dan Trivy Security Scanner (vulnerability & secret) | Job `dependency-check` pada workflow CI |
 | 10 | **Secret Management** | Zero hardcoded credentials, isolasi `.env`, penggunaan GitHub Secrets | Penggunaan `secrets.SONAR_TOKEN`, `secrets.APP_KEY`, `.env.example` | File `.gitignore`, audit repo, secret configuration |
 | 11 | **Branch Protection & Review** | Proteksi branch `main`, wajib Pull Request, minimal 1 reviewer approval | Konfigurasi GitHub Branch Protection rules & status checks wajib | Pengaturan repository GitHub & riwayat PR |
-| 12 | **Dokumentasi & Laporan** | Laporan lengkap 7 bagian, video YouTube, retrospektif mendalam | Penyusunan laporan berdasarkan template resmi | Dokumen `docs/laporan-uts-template.md` & tautan YouTube |
+| 12 | **Dokumentasi & Laporan** | Laporan lengkap 7 bagian, video YouTube, retrospektif mendalam | Penyusunan laporan berdasarkan template resmi | Dokumen `docs/reports/laporan-uts-template.md` & tautan YouTube |
 
 ---
 
@@ -323,7 +323,7 @@ Berikut adalah potensi kendala teknis dan jebakan operasional (*common pitfalls*
 - **Potensi Masalah**: Proses audit mendeteksi advisory CVE pada paket dependensi transitif (dependensi dari dependensi) yang belum dirilis perbaikannya oleh pembuat library, sehingga job `dependency-check` berpotensi menghentikan pipeline.
 - **Langkah Mitigasi**:
   - Gunakan flag audit yang terukur di pipeline (`--audit-level=high` untuk NPM).
-  - Jika kerentanan berada pada level rendah (*low*) atau belum ada patch resmi, catat detail temuan, alasan risiko dapat ditoleransi, dan rencana mitigasi kompensasi pada dokumen [`docs/threat-modeling-stride.md`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/threat-modeling-stride.md).
+  - Jika kerentanan berada pada level rendah (*low*) atau belum ada patch resmi, catat detail temuan, alasan risiko dapat ditoleransi, dan rencana mitigasi kompensasi pada dokumen [`docs/devsecops/threat-modeling-stride.md`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/devsecops/threat-modeling-stride.md).
 
 ### 8.5 Manajemen Cache GitHub Actions (Cache Staling & Invalidation)
 - **Potensi Masalah**: Runner menggunakan cache lama dari run sebelumnya sehingga penambahan pustaka baru tidak dikenali atau menimbulkan konflik.
@@ -341,7 +341,7 @@ Berikut adalah potensi kendala teknis dan jebakan operasional (*common pitfalls*
     2. Screenshot halaman Pull Request dengan review & approval dari anggota lain.
     3. Screenshot dashboard SonarCloud dengan metrik Quality Gate PASSED.
     4. Screenshot terminal hasil tes Pest beserta ringkasan Code Coverage.
-  - Simpan seluruh aset visual tersebut ke dalam folder arsip proyek agar siap dimasukkan ke [`docs/laporan-uts-template.md`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/laporan-uts-template.md).
+  - Simpan seluruh aset visual tersebut ke dalam folder arsip proyek agar siap dimasukkan ke [`docs/reports/laporan-uts-template.md`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/docs/reports/laporan-uts-template.md).
 
 ### 8.7 Koordinasi & Keseimbangan Durasi Video Demonstrasi (Rubrik 5)
 - **Potensi Masalah**: Perekaman video melebihi batas waktu (lebih dari 10 menit) atau didominasi oleh satu orang saja, sehingga nilai penguasaan materi dan kontribusi individu anggota lain berkurang.
@@ -386,5 +386,5 @@ Sebelum melangkah ke konfigurasi lanjutan atau rilis final, pastikan seluruh ite
 - [ ] Audit dependensi `composer audit` dan `npm audit` berjalan otomatis di pipeline.
 - [ ] Tidak ada hardcoded credentials di seluruh file repository (diverifikasi via git scan).
 - [ ] Branch protection aktif pada branch `main` dengan syarat minimal 1 approval dan checks passing.
-- [ ] Dokumen laporan UTS (7 Bagian) tersusun rapi di `docs/laporan-uts-template.md`.
+- [ ] Dokumen laporan UTS (7 Bagian) tersusun rapi di `docs/reports/laporan-uts-template.md`.
 - [ ] Video demonstrasi diunggah ke YouTube dengan kualitas audio-visual yang jelas.

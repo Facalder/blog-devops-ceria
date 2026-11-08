@@ -4,12 +4,15 @@ namespace App\Livewire\Admin\Posts;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Services\PostExcerptGenerator;
+use App\Services\PostSlugGenerator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -21,6 +24,9 @@ class Create extends Component
 
     public string $slug = '';
 
+    #[Locked]
+    public bool $slugEdited = false;
+
     public ?int $category_id = null;
 
     public string $content = '';
@@ -28,6 +34,8 @@ class Create extends Component
     public ?string $excerpt = null;
 
     public string $status = 'draft';
+
+    public ?string $scheduled_at = null;
 
     /**
      * @return array<string, array<int, string>>
@@ -40,21 +48,43 @@ class Create extends Component
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'content' => ['required', 'string'],
             'excerpt' => ['nullable', 'string', 'max:500'],
-            'status' => ['required', 'in:draft,published'],
+            'status' => ['required', 'in:draft,published,scheduled'],
+            'scheduled_at' => $this->status === 'scheduled'
+                ? ['required', 'date', 'after:now']
+                : ['nullable'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function messages(): array
+    {
+        return [
+            'scheduled_at.required' => 'Tanggal dan waktu publikasi wajib diisi untuk artikel terjadwal.',
+            'scheduled_at.date' => 'Format tanggal dan waktu publikasi tidak valid.',
+            'scheduled_at.after' => 'Jadwal publikasi harus berada di masa depan.',
         ];
     }
 
     public function updatedTitle(string $value): void
     {
-        if ($this->slug === '' || $this->slug === Str::slug(Str::beforeLast($value, ' '))) {
-            $this->slug = Str::slug($value);
+        if (! $this->slugEdited) {
+            $this->slug = trim($value) === ''
+                ? ''
+                : app(PostSlugGenerator::class)->generate($value);
         }
+    }
+
+    public function updatedSlug(): void
+    {
+        $this->slugEdited = trim($this->slug) !== '';
     }
 
     public function save(): void
     {
-        if (empty($this->slug) && ! empty($this->title)) {
-            $this->slug = Str::slug($this->title);
+        if (! $this->slugEdited && trim($this->title) !== '') {
+            $this->slug = app(PostSlugGenerator::class)->generate($this->title);
         }
 
         if (empty($this->category_id)) {
@@ -62,6 +92,7 @@ class Create extends Component
         }
 
         $validated = $this->validate();
+        $status = $validated['status'];
 
         $post = new Post;
         $post->user_id = (int) Auth::id();
@@ -69,12 +100,15 @@ class Create extends Component
         $post->slug = $validated['slug'];
         $post->category_id = $validated['category_id'] ? (int) $validated['category_id'] : null;
         $post->content = $validated['content'];
-        $post->excerpt = $validated['excerpt'] ?: Str::limit(strip_tags($validated['content']), 160);
-        $post->status = $validated['status'];
-        $post->published_at = $validated['status'] === 'published' ? now() : null;
+        $post->excerpt = $validated['excerpt'] ?: app(PostExcerptGenerator::class)->generate($validated['content']);
+        $post->status = $status;
+        $post->published_at = $status === 'published' ? now() : null;
+        $post->scheduled_at = $status === 'scheduled' ? Carbon::parse($validated['scheduled_at']) : null;
         $post->save();
 
-        session()->flash('status', 'Artikel berhasil dibuat.');
+        session()->flash('status', $status === 'scheduled'
+            ? 'Artikel berhasil dijadwalkan.'
+            : 'Artikel berhasil dibuat.');
 
         $this->redirect(route('posts.index'), navigate: true);
     }

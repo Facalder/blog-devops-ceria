@@ -1,6 +1,18 @@
 # Dokumentasi Pipeline CI/CD: Multi-Stage GitHub Actions
 
-Dokumentasi ini menjelaskan konfigurasi dan alur kerja pipeline *Continuous Integration* (CI) yang diimplementasikan pada repositori ini menggunakan GitHub Actions ([`.github/workflows/ci.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/ci.yml)).
+Dokumentasi ini menjelaskan konfigurasi dan alur kerja pipeline *Continuous Integration* (CI) dan *DevSecOps* yang diimplementasikan secara modular pada repositori ini menggunakan GitHub Actions melalui workflow-workflow terisolasi:
+- **CI Workflows**:
+  - [`.github/workflows/ci-code-quality.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/ci-code-quality.yml) (Laravel Pint & PHPStan Level 7)
+  - [`.github/workflows/ci-frontend-build.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/ci-frontend-build.yml) (Vite Plus Asset Build)
+  - [`.github/workflows/ci-testing.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/ci-testing.yml) (Pest 5 Automated Testing & PCOV Coverage)
+  - [`.github/workflows/sonarcloud.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/sonarcloud.yml) (SonarCloud Code Quality & Gate)
+- **DevSecOps Workflows (Sesuai Rubrik Evaluasi)**:
+  - [`.github/workflows/devsecops-branch-protection.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-branch-protection.yml) (PIC: Anggota 1 - Branch Protection)
+  - [`.github/workflows/devsecops-composer-audit.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-composer-audit.yml) (PIC: Anggota 2 - Backend Dependency)
+  - [`.github/workflows/devsecops-npm-audit.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-npm-audit.yml) (PIC: Anggota 3 - Frontend Dependency)
+  - [`.github/workflows/devsecops-secret-scan.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-secret-scan.yml) (PIC: Anggota 4 - Secret Management)
+  - [`.github/workflows/sonarcloud.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/sonarcloud.yml) (PIC: Anggota 5 - SonarQube Quality Gate)
+  - [`.github/workflows/devsecops-stride-tests.yml`](file:///Volumes/Caldera/CALDERA/PRIBADI/DevOps/blog-devops-ceria/.github/workflows/devsecops-stride-tests.yml) (PIC: Anggota 6 - STRIDE Threat Modeling)
 
 ---
 

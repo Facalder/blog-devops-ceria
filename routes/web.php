@@ -5,6 +5,7 @@ use App\Livewire\Admin\Posts\Create as PostsCreate;
 use App\Livewire\Admin\Posts\Edit as PostsEdit;
 use App\Livewire\Admin\Posts\Index as PostsIndex;
 use App\Livewire\Admin\Users\Index as UsersIndex;
+use App\Livewire\Bookmarks\Index as BookmarksIndex;
 use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
@@ -17,12 +18,15 @@ Route::get('/', function (Request $request) {
     $searchQuery = $request->query('search');
     $search = is_string($searchQuery) && $searchQuery !== '' ? $searchQuery : null;
 
-    $categories = Category::withCount(['posts' => fn ($q) => $q->published()])
+    $categories = Category::query()
+        ->withCount(['posts' => fn ($q) => $q->published()])
         ->get()
         ->filter(fn ($c) => $c->posts_count > 0);
 
-    $posts = Post::published()
+    $posts = Post::query()
+        ->published()
         ->with(['user', 'category'])
+        ->withCount('comments')
         ->when($selectedCategorySlug, function ($query, $slug) {
             $query->whereHas('category', fn ($c) => $c->where('slug', $slug));
         })
@@ -47,7 +51,9 @@ Route::get('/', function (Request $request) {
 })->name('home');
 
 Route::get('/blog/{post:slug}', function (Post $post) {
-    abort_if($post->status !== 'published', 404);
+    abort_unless($post->isPubliclyVisible(), 404);
+
+    $post->loadCount('comments');
 
     return view('blog.show', ['post' => $post]);
 })->name('blog.show');
@@ -62,6 +68,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('dashboard/categories', CategoriesIndex::class)->name('categories.index');
 
     Route::get('dashboard/users', UsersIndex::class)->name('users.index');
+
+    Route::get('dashboard/bookmarks', BookmarksIndex::class)->name('bookmarks.index');
 });
 
 require __DIR__.'/settings.php';
