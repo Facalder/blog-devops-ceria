@@ -77,7 +77,22 @@ class Edit extends Component
             'category_id' => ['nullable', 'integer', 'exists:categories,id'],
             'content' => ['required', 'string'],
             'excerpt' => ['nullable', 'string', 'max:500'],
-            'status' => ['required', 'in:draft,published'],
+            'status' => ['required', 'in:draft,published,scheduled'],
+            'scheduled_at' => $this->status === 'scheduled'
+                ? ['required', 'date', 'after:now']
+                : ['nullable'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function messages(): array
+    {
+        return [
+            'scheduled_at.required' => 'Tanggal dan waktu publikasi wajib diisi untuk artikel terjadwal.',
+            'scheduled_at.date' => 'Format tanggal dan waktu publikasi tidak valid.',
+            'scheduled_at.after' => 'Jadwal publikasi harus berada di masa depan.',
         ];
     }
 
@@ -92,6 +107,7 @@ class Edit extends Component
         }
 
         $validated = $this->validate();
+        $status = $validated['status'];
 
         $this->post->title = $validated['title'];
         $this->post->slug = $validated['slug'];
@@ -99,13 +115,21 @@ class Edit extends Component
         $this->post->content = $validated['content'];
         $this->post->excerpt = $validated['excerpt'] ?: Str::limit(strip_tags($validated['content']), 160);
 
-        if ($this->post->status !== 'published' && $validated['status'] === 'published') {
-            $this->post->published_at = now();
-        } elseif ($validated['status'] === 'draft') {
+        if ($status === 'published') {
+            if ($this->post->status !== 'published' || $this->post->published_at === null) {
+                $this->post->published_at = now();
+            }
+
+            $this->post->scheduled_at = null;
+        } elseif ($status === 'scheduled') {
             $this->post->published_at = null;
+            $this->post->scheduled_at = Carbon::parse($validated['scheduled_at']);
+        } else {
+            $this->post->published_at = null;
+            $this->post->scheduled_at = null;
         }
 
-        $this->post->status = $validated['status'];
+        $this->post->status = $status;
         $this->post->save();
 
         /** @var User $actor */

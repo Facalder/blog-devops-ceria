@@ -87,17 +87,41 @@
                     <label class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
                         Status Artikel
                     </label>
-                    <div class="space-y-2">
+                                        <div class="space-y-2">
                         <label class="flex items-center gap-2 text-sm text-on-surface cursor-pointer">
-                            <input type="radio" wire:model="status" value="draft" class="text-primary focus:ring-primary" />
+                            <input type="radio" wire:model.live="status" value="draft" class="text-primary focus:ring-primary" />
                             <span>Draf (Hanya Admin)</span>
                         </label>
                         <label class="flex items-center gap-2 text-sm text-on-surface cursor-pointer">
-                            <input type="radio" wire:model="status" value="published" class="text-primary focus:ring-primary" />
-                            <span>Publikasikan ke Pembaca</span>
+                            <input type="radio" wire:model.live="status" value="published" class="text-primary focus:ring-primary" />
+                            <span>Publikasikan Sekarang</span>
+                        </label>
+                        <label class="flex items-center gap-2 text-sm text-on-surface cursor-pointer">
+                            <input type="radio" wire:model.live="status" value="scheduled" class="text-primary focus:ring-primary" />
+                            <span>Jadwalkan Publikasi</span>
                         </label>
                     </div>
+                    @error('status')
+                        <p class="mt-1 text-xs text-[#E45757]">{{ $message }}</p>
+                    @enderror
                 </div>
+
+                @if ($status === 'scheduled')
+                    <div>
+                        <label class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
+                            Waktu Publikasi ({{ config('app.timezone') }}) *
+                        </label>
+                        <input
+                            type="datetime-local"
+                            wire:model="scheduled_at"
+                            min="{{ now()->format('Y-m-d\TH:i') }}"
+                            class="w-full rounded-[2px] border border-border-subtle bg-white px-3 py-2 font-mono text-xs text-on-surface focus:border-primary focus:outline-hidden focus:ring-1 focus:ring-primary"
+                        />
+                        @error('scheduled_at')
+                            <p class="mt-1 text-xs text-[#E45757]">{{ $message }}</p>
+                        @enderror
+                    </div>
+                @endif
 
                 <div>
                     <label class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">

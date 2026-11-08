@@ -47,7 +47,7 @@ Route::get('/', function (Request $request) {
 })->name('home');
 
 Route::get('/blog/{post:slug}', function (Post $post) {
-    abort_if($post->status !== 'published', 404);
+    abort_unless($post->isPubliclyVisible(), 404);
 
     return view('blog.show', ['post' => $post]);
 })->name('blog.show');
