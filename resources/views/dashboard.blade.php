@@ -203,7 +203,9 @@
                                     </td>
                                     <td class="px-4 py-3.5 whitespace-nowrap">
                                         @if ($post->status === 'published')
-                                            <x-badge variant="success">Published</x-badge>
+                                       <x-badge variant="success">Published</x-badge>
+                                        @elseif ($post->status === 'scheduled')
+                                            <x-badge variant="warning">Terjadwal</x-badge>
                                         @else
                                             <x-badge variant="neutral">Draft</x-badge>
                                         @endif
