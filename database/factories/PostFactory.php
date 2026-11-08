@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -37,6 +38,15 @@ class PostFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'status' => 'draft',
             'published_at' => null,
+        ]);
+    }
+
+    public function scheduled(?DateTimeInterface $scheduledAt = null): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'scheduled',
+            'published_at' => null,
+            'scheduled_at' => $scheduledAt ?? now()->addDay(),
         ]);
     }
 }
