@@ -33,24 +33,34 @@
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div class="space-y-5 lg:col-span-2">
             <div>
-                <label class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
+                <label for="title" class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
                     Judul Artikel *
                 </label>
-                <input type="text" wire:model.live.debounce.400ms="title" placeholder="Masukkan judul artikel..."
-                    class="w-full font-serif text-2xl font-light bg-white text-on-surface border border-border-subtle rounded-[2px] px-3.5 py-2.5 focus:border-primary focus:outline-hidden focus:ring-1 focus:ring-primary placeholder:text-tertiary" />
+                <input
+                    id="title"
+                    type="text"
+                    wire:model.live.debounce.400ms="title"
+                    placeholder="Masukkan judul artikel..."
+                    class="w-full font-serif text-2xl font-light bg-white text-on-surface border border-border-subtle rounded-[2px] px-3.5 py-2.5 focus:border-primary focus:outline-hidden focus:ring-1 focus:ring-primary placeholder:text-tertiary"
+                />
                 @error('title')
                 <p class="mt-1 text-xs text-[#E45757]">{{ $message }}</p>
                 @enderror
             </div>
 
             <div>
-                <label class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
+                <label for="slug" class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
                     Slug URL *
                 </label>
                 <div class="flex items-center rounded-[2px] border border-border-subtle bg-surface px-3 py-1.5">
                     <span class="font-mono text-xs text-tertiary mr-1">/blog/</span>
-                    <input type="text" wire:model="slug" placeholder="judul-artikel"
-                        class="w-full font-mono text-xs text-on-surface bg-transparent focus:outline-hidden" />
+                    <input
+                        id="slug"
+                        type="text"
+                        wire:model="slug"
+                        placeholder="judul-artikel"
+                        class="w-full font-mono text-xs text-on-surface bg-transparent focus:outline-hidden"
+                    />
                 </div>
                 @error('slug')
                 <p class="mt-1 text-xs text-[#E45757]">{{ $message }}</p>
@@ -83,10 +93,10 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
+                    <span id="status-label" class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
                         Status Artikel
-                    </label>
-                                        <div class="space-y-2">
+                    </span>
+                    <div class="space-y-2" role="radiogroup" aria-labelledby="status-label">
                         <label class="flex items-center gap-2 text-sm text-on-surface cursor-pointer">
                             <input type="radio" wire:model="status" value="draft"
                                 class="text-primary focus:ring-primary" />
@@ -109,10 +119,11 @@
 
                 @if ($status === 'scheduled')
                     <div>
-                        <label class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
+                        <label for="scheduled_at" class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
                             Waktu Publikasi ({{ config('app.timezone') }}) *
                         </label>
                         <input
+                            id="scheduled_at"
                             type="datetime-local"
                             wire:model="scheduled_at"
                             min="{{ now()->format('Y-m-d\TH:i') }}"
@@ -136,11 +147,14 @@
                 @endif
 
                 <div>
-                    <label class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
+                    <label for="category_id" class="block text-xs font-mono uppercase tracking-wider text-tertiary mb-1.5">
                         Kategori Artikel
                     </label>
-                    <select wire:model="category_id"
-                        class="w-full rounded-[2px] border border-border-subtle bg-white px-3 py-2 text-sm text-on-surface focus:border-primary focus:outline-hidden focus:ring-1 focus:ring-primary">
+                    <select
+                        id="category_id"
+                        wire:model="category_id"
+                        class="w-full rounded-[2px] border border-border-subtle bg-white px-3 py-2 text-sm text-on-surface focus:border-primary focus:outline-hidden focus:ring-1 focus:ring-primary"
+                    >
                         <option value="">Pilih Kategori (Opsional)</option>
                         @foreach ($this->categories as $category)
                         <option value="{{ $category->id }}">{{ $category->name }}</option>
