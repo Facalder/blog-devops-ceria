@@ -1,12 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\Admin\Posts;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\PostRevision;
+use App\Models\User;
+use App\Services\PostRevisionService;
+use App\Services\TextDiffEngine;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
@@ -32,7 +38,17 @@ class Edit extends Component
 
     public string $status = 'draft';
 
-    public ?string $scheduled_at = null;
+    public bool $showRevisionModal = false;
+
+    public ?int $selectedRevisionId = null;
+
+    public string $diffHtml = '';
+
+    public string $diffStats = '';
+
+    public bool $confirmingRestore = false;
+
+    public ?int $selectedRevisionNumber = null;
 
     public function mount(Post $post): void
     {
@@ -43,7 +59,11 @@ class Edit extends Component
         $this->content = $post->content;
         $this->excerpt = $post->excerpt;
         $this->status = $post->status;
-        $this->scheduled_at = $post->scheduled_at?->format('Y-m-d\TH:i');
+
+        if ($post->revisions()->count() === 0) {
+            $author = $post->user;
+            (new PostRevisionService)->createRevision($post, $author, 'Inisialisasi baseline artikel');
+        }
     }
 
     /**
@@ -112,27 +132,67 @@ class Edit extends Component
         $this->post->status = $status;
         $this->post->save();
 
+        /** @var User $actor */
+        $actor = Auth::user();
+        (new PostRevisionService)->createRevision($this->post, $actor, 'Pembaruan artikel');
+
         session()->flash('status', 'Artikel berhasil diperbarui.');
 
         $this->redirect(route('posts.index'), navigate: true);
     }
 
-    public function cancelSchedule(): void
+    public function viewDiff(int $revisionId): void
     {
-        if ($this->post->status !== 'scheduled') {
+        /** @var PostRevision|null $revision */
+        $revision = $this->post->revisions()->where('id', $revisionId)->first();
+
+        if ($revision === null) {
             return;
         }
 
-        $this->post->status = 'draft';
-        $this->post->scheduled_at = null;
-        $this->post->save();
+        $this->selectedRevisionId = $revisionId;
+        $diffEngine = new TextDiffEngine;
+        $diff = $diffEngine->calculateDiff($revision->content, $this->content);
+        $this->diffHtml = $diffEngine->renderHtml($diff);
 
-        $this->status = 'draft';
-        $this->scheduled_at = null;
+        $stats = $diffEngine->getStatistics($diff);
+        $this->diffStats = "+{$stats['added']} karakter ditambah, -{$stats['removed']} karakter dihapus";
+        $this->showRevisionModal = true;
+    }
 
-        session()->flash('status', 'Jadwal publikasi dibatalkan. Artikel kembali menjadi draft.');
+    public function closeDiff(): void
+    {
+        $this->showRevisionModal = false;
+        $this->selectedRevisionId = null;
+        $this->diffHtml = '';
+        $this->diffStats = '';
+    }
 
-        $this->redirect(route('posts.index'), navigate: true);
+    public function restoreRevision(int $revisionId): void
+    {
+        /** @var PostRevision|null $revision */
+        $revision = $this->post->revisions()->where('id', $revisionId)->first();
+
+        if ($revision === null) {
+            return;
+        }
+
+        /** @var User $actor */
+        $actor = Auth::user();
+
+        (new PostRevisionService)->rollback($this->post, $revision, $actor);
+
+        $this->post->refresh();
+        $this->title = (string) $this->post->title;
+        $this->slug = (string) $this->post->slug;
+        $this->content = (string) $this->post->content;
+        $this->excerpt = $this->post->excerpt;
+        $this->category_id = $this->post->category_id ? (int) $this->post->category_id : null;
+        $this->status = (string) $this->post->status;
+
+        $this->closeDiff();
+
+        session()->flash('status', "Berhasil memulihkan artikel ke Versi #{$revision->revision_number}.");
     }
 
     /**
@@ -144,8 +204,29 @@ class Edit extends Component
         return Category::orderBy('name')->get();
     }
 
+    /**
+     * @return Collection<int, PostRevision>
+     */
+    /**
+     * @return Collection<int, PostRevision>
+     */
+    #[Computed]
+    public function revisions(): Collection
+    {
+        /** @var Collection<int, PostRevision> $result */
+        $result = $this->post->revisions()->with('user')->get();
+
+        return $result;
+    }
+
     public function render(): View
     {
         return view('livewire.admin.posts.edit');
+    }
+
+    public function startRollbackFromSidebar(int $revisionId): void
+    {
+        $this->viewDiff($revisionId);
+        $this->confirmingRestore = true;
     }
 }
