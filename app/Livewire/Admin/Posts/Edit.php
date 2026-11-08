@@ -183,7 +183,7 @@ class Edit extends Component
     /**
      * @return Collection<int, PostRevision>
      */
-        /**
+    /**
      * @return Collection<int, PostRevision>
      */
     #[Computed]
